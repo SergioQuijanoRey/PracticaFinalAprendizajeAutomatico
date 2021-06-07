@@ -30,3 +30,4 @@
 # Notas
 
 * Support vector machine, en los apuntes, ponía que no tenía mucho éxito con regresión
+* Poner en la memoria cómo hemos hecho `unzip` en la carpeta de datos
