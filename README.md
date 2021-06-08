@@ -24,10 +24,12 @@
 
 # TODO
 
-* [ ] Juntar los datasets
+* [x] Juntar los datasets
+* [ ] Limpieza de los datos
 * [ ] Pensar los modelos que vamos a emplear
 
 # Notas
 
 * Support vector machine, en los apuntes, ponía que no tenía mucho éxito con regresión
 * Poner en la memoria cómo hemos hecho `unzip` en la carpeta de datos
+* Hay que explicar lo que hace LocalOutlierFactor: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html
