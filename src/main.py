@@ -10,11 +10,13 @@ Dataset:
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, GridSearchCV
 from scipy import stats # Para calcular el z-score en un dataframe de pandas
+
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.decomposition import PCA
+from sklearn.linear_model import Lasso, Ridge
 
 # TODO -- borrar esto y copiar el archivo core aqui
 from core import *
@@ -44,7 +46,7 @@ def load_data():
     for data_file in data_files:
         current_df = pd.read_csv(data_file, header = None)
         df.append(current_df)
-    
+
     return df
 
 def split_train_test(df):
@@ -52,7 +54,7 @@ def split_train_test(df):
     # Dividimos en los datos y los valores
     x = df.iloc[:, :-1]
     y = df.iloc[:, -1]
-    
+
     # Dividimos en training y test (80% y 20%)
     x_train, x_test, y_train, y_test = train_test_split(x,y, test_size = 0.2, shuffle=True)
     return x_train, x_test, y_train, y_test
@@ -244,6 +246,48 @@ def apply_PCA(df_train_X, df_test_X, explained_variation = 0.90, number_componen
 
     return df_transformed_X, df_test_transformed_X
 
+def show_cross_validation(df_train_X, df_train_Y, df_train_X_original):
+    """
+    Lanza cross validation y muestra los resultados obtenidos
+
+    Parameters:
+    ===========
+    df_train_X: dataframe con los datos de entrada, a los que hemos aplicado PCA
+    df_train_Y: dataframe con los datos de salida
+    df_train_X_original: dataframe con los datos sin aplicar PCA
+    """
+
+    # Cross validation para modelos lineales
+    cross_validation_linear(df_train_X, df_train_Y, df_train_X_original)
+
+    # Cross validation para random forest
+    #  cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original)
+
+    # Cross validation para SVM
+    #  cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original)
+
+    wait_for_user_input()
+
+def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
+    # Parametros prefijados
+    max_iters = 1e4
+    tol = 1e-4
+
+    # Kfold cross validation
+    kf = KFold(n_splits=10, shuffle = True)
+
+    # Los dos modelos lineales que vamos a considerar
+    lasso = Lasso(max_iter = max_iters, tol = tol)
+    ridge = Ridge(max_iter = max_iters, tol = tol)
+
+    # Espacio de busqueda
+    parameters = {
+        'alpha': np.logspace(-4, 0, 10)
+    }
+
+    gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
+    gs.fit(df_train_X, df_train_Y)
+    results = gs.cv_results_
 
 
 # Funcion principal
@@ -275,7 +319,8 @@ if __name__ == "__main__":
     #df = remove_outliers(append_series_to_dataframe(df_train_x, df_train_y, column_name=["53"]), 4.0, output_cols=["53"])
     #df_train_x, df_train_y = split_dataset_into_X_and_Y(df)
 
-    df_train_x, df_train_y = outliers_out(df_train_x, df_train_y)
+    # TODO -- descomentar
+    # df_train_x, df_train_y = outliers_out(df_train_x, df_train_y)
     print(f"Tamaño tras la limpieza de outliers del train_set: {len(df_train_x)}")
     print(f"Numero de filas eliminadas: {prev_len - len(df_train_x)}")
     print(f"Porcentaje de filas eliminadas: {float(prev_len - len(df_train_x)) / float(prev_len) * 100.0}%")
@@ -283,11 +328,19 @@ if __name__ == "__main__":
 
     print("==> Estandarizando el dataset")
     df_train_x, df_test_x = standarize_dataset(df_train_x, df_test_x)
-    # TODO -- mostrar en la memoria como queda estandarizado -> Por que? 
+    # TODO -- mostrar en la memoria como queda estandarizado -> Por que?
     # Porque estandarizando tambien se normalizan los rangos en cierta medida y eso
     # hay que justificarlo
     # TODO -- descomentar cuando hagamos la memoria
     #explore_training_set(df_train_x)
 
     print("==> Aplicando PCA")
+
+    # Guardamos estos dataframes para futuras comparaciones
+    df_train_original_x = df_train_x.copy()
+    df_test_original_x = df_test_x.copy()
+
     df_train_x, df_test_x = apply_PCA(df_train_x, df_test_x, explained_variation = 0.99)
+
+    print("==> Lanzando cross validation")
+    show_cross_validation(df_train_x, df_train_y, df_train_original_x)
