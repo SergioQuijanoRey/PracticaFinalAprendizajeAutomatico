@@ -25,8 +25,22 @@
 # TODO
 
 * [x] Juntar los datasets
-* [ ] Limpieza de los datos
-* [ ] Pensar los modelos que vamos a emplear
+* [x] Limpieza de los datos
+* [x] Pensar los modelos que queremos usar
+* [ ] Escribir la funcion que elimine outliers con el `z-score` de `Pandas`
+* [ ] Función que tome los resultados de `GridSearchCV` y los muestre por pantalla en un formato legible
+* [ ] Hacer los *cross-validation* faltantes
+* [ ] Entrenar sobre todo el conjunto de datos
+
+# Modelos candidatos
+
+1. Modelo lineal: ajuste de un hiperplano
+    * Lasso
+    * Ridge
+2. Perceptrón multicapa
+3. Random Forrest
+4. Radial Basis Function
+5. Boosting con árboles simples se puede poner como ejemplo de que van mal, no están incorrelados, y esto es lo que trata de mejorar Random Forrest
 
 # Notas
 
