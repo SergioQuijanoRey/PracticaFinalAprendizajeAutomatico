@@ -216,20 +216,20 @@ def show_cross_validation(df_train_x, df_train_y, df_train_x_original):
     cross_validation_linear(df_train_x, df_train_y)
 
     # Cross validation para SVM
-    #  cross_validation_mlp(df_train_x, df_train_y)
+    cross_validation_mlp(df_train_x, df_train_y)
 
     # Cross validation para random forest
-    #  cross_validation_random_forest(df_train_x, df_train_y)
+    cross_validation_random_forest(df_train_x, df_train_y)
 
     print("--> CV -- No PCA")
     # Cross validation para modelos lineales
     cross_validation_linear(df_train_x_original, df_train_y)
 
     # Cross validation para SVM
-    #  cross_validation_mlp(df_train_x_original, df_train_y)
+    cross_validation_mlp(df_train_x_original, df_train_y)
 
     # Cross validation para random forest
-    #  cross_validation_random_forest(df_train_x_original, df_train_y)
+    cross_validation_random_forest(df_train_x_original, df_train_y)
 
     wait_for_user_input()
 
