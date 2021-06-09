@@ -17,11 +17,17 @@ from sklearn.neighbors import LocalOutlierFactor
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.decomposition import PCA
 from sklearn.linear_model import Lasso, Ridge
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, IsolationForest
 from sklearn.neural_network import MLPRegressor
+from sklearn.covariance import EllipticEnvelope
 
 # TODO -- borrar esto y copiar el archivo core aqui
 from core import *
+
+# Parametros globlales
+#===============================================================================
+n_jobs = -1 # Poner a None si peta demasiado
+folds = 5   # Para controlar los tiempos de cross validation
 
 # Carga de los datos
 #===============================================================================
@@ -32,21 +38,12 @@ def load_data():
         https://stackoverflow.com/questions/20906474/import-multiple-csv-files-into-pandas-and-concatenate-into-one-dataframe
     """
     data_files = [
-        "./datos/Training/Features_Variant_2.csv",
-        "./datos/Training/Features_Variant_3.csv",
-        "./datos/Training/Features_Variant_4.csv",
-        "./datos/Training/Features_Variant_5.csv",
+        "./datos/Training/Features_Variant_1.csv",
         "./datos/Testing/TestSet/Test_Case_1.csv",
-        "./datos/Testing/TestSet/Test_Case_2.csv",
-        "./datos/Testing/TestSet/Test_Case_3.csv",
-        "./datos/Testing/TestSet/Test_Case_4.csv",
-        "./datos/Testing/TestSet/Test_Case_5.csv",
-        "./datos/Testing/TestSet/Test_Case_6.csv",
-        "./datos/Testing/TestSet/Test_Case_7.csv",
-        "./datos/Testing/TestSet/Test_Case_8.csv",
-        "./datos/Testing/TestSet/Test_Case_9.csv",
-        "./datos/Testing/TestSet/Test_Case_10.csv",
     ]
+
+    # Seleccionamos la primera variante
+    variant = 1
 
     dfs = (pd.read_csv(data_file, header = None) for data_file in data_files)
     df = pd.concat(dfs, ignore_index=True)
@@ -84,88 +81,6 @@ def explore_training_set(df):
     print_full(stats)
     wait_for_user_input()
 
-def remove_outliers(df, times_std_dev, output_cols = []):
-    """
-    Elimina las filas de la matriz representada por df en las que, en alguna columna, el valor de la
-    fila esta mas de times_std_dev veces desviado de la media
-    Paramters:
-    ==========
-    df: dataframe sobre el que trabajamos
-    times_std_dev: umbral de desviacion respecto a la desviacion estandar
-                   Un valor usual es 3.0, porque el 99.74% de los datos de una distribucion normal
-                   se encuentran en el intervalo (-3 std + mean, 3 std + mean)
-    output_cols: columnas de salida, sobre las que no queremos comprobar los outliers
-    Returns:
-    ========
-    cleaned_df: dataframe al que hemos quitado las filas asociadas a los outliers descritos
-    """
-    # Quitamos las columnas de salida al dataframe. Se usa para la siguiente linea en la que hacemos
-    # la seleccion
-    df_not_output = df.copy()
-
-    # Filtramos las columnas, columna por columna
-    for col in output_cols:
-        df_not_output = df_not_output.loc[:, df_not_output.columns != col]
-
-    # Filtramos los outliers, sin tener en cuenta las columnas de variables de salida
-    return df[(np.abs(stats.zscore(df_not_output)) < times_std_dev).all(axis=1)]
-
-def outliers_out(df_x_train, df_y_train):
-    """
-    Borramos los outliers de nuestro dataset. Usando la técnica local factors
-
-    Parameters:
-    ===========
-    df_x_train: dataframe con los datos de entrada
-    df_y_train: dataframe con los valores de salida
-
-    Returns:
-    =========
-    x_cleaned: dataframe con los datos de entrada sin outliers
-    y_cleaned: dataframe con los datos de salida en los que hemos eliminado las mismas filas que en x_cleaned
-    """
-    # Identificamos los outliers en los datos
-    # Pasamos a array los datasets
-    np_x_train = df_x_train.to_numpy()
-    np_y_train = df_y_train.to_numpy()
-
-    lof = LocalOutlierFactor()
-    outliers = lof.fit_predict(np_x_train)
-
-    mask = outliers != -1
-
-    # seleccionamos las filas que no son outliers
-    x_cleaned = pd.DataFrame(np_x_train[mask, :])
-    y_cleaned =  pd.Series(np_y_train[mask])
-    return x_cleaned, y_cleaned
-
-def remove_outliers(df, times_std_dev, output_cols = []):
-    """
-    Elimina las filas de la matriz representada por df en las que, en alguna columna, el valor de la
-    fila esta mas de times_std_dev veces desviado de la media.
-
-    Parameters:
-    ==========
-    df: dataframe sobre el que trabajamos
-    times_std_dev: umbral de desviacion respecto a la desviacion estandar
-                   Un valor usual es 3.0, porque el 99.74% de los datos de una distribucion normal
-                   se encuentran en el intervalo (-3 std + mean, 3 std + mean)
-    output_cols: columnas de salida, sobre las que no queremos comprobar los outliers
-    Returns:
-    ========
-    cleaned_df: dataframe al que hemos quitado las filas asociadas a los outliers descritos
-    """
-    # Quitamos las columnas de salida al dataframe. Se usa para la siguiente linea en la que hacemos
-    # la seleccion
-    df_not_output = df.copy()
-
-    # Filtramos las columnas, columna por columna
-    for col in output_cols:
-        df_not_output = df_not_output.loc[:, df_not_output.columns != col]
-
-    # Filtramos los outliers, sin tener en cuenta las columnas de variables de salida
-    return df[(np.abs(stats.zscore(df_not_output)) < times_std_dev).all(axis=1)]
-
 def standarize_dataset(train_df, test_df):
     """
     Estandariza el dataset, usando solo la informacion de los datos de entrenamiento. A los datos de
@@ -174,6 +89,8 @@ def standarize_dataset(train_df, test_df):
     la misma trasnformacion a estos datos
     Si no queremos standarizar las columnas de salida, separar antes los dataframes y pasar solo
     la matriz de datos de entrada!!
+
+    TODO --> Cambiar la documentacion porque ya no usamos dataframes
     Parameters:
     ===========
     train_df: dataframe de datos de entrenamiento, de los que se calculan los estadisticos para la
@@ -186,19 +103,37 @@ def standarize_dataset(train_df, test_df):
     standarized_test: dataframe con los datos de test estandarizados con la misma transformacion
                      calculada a partir de los datos de entrenamiento
     """
-    # Guardamos los nombres de las columna del dataframe, porque la tranformacion va a hacer que
-    # perdamos este metadato
-    prev_cols = train_df.columns
 
     scaler = StandardScaler()
     standarized_train = scaler.fit_transform(train_df)
     standarized_test = scaler.transform(test_df)
 
-    # La transformacion devuelve np.arrays, asi que volvemos a dataframes
-    standarized_train = pd.DataFrame(standarized_train, columns = prev_cols)
-    standarized_test = pd.DataFrame(standarized_test, columns = prev_cols)
-
     return standarized_train, standarized_test
+
+def remove_outliers(df_train_x, df_train_y):
+    """Elimina los outliers del dataset
+    TODO -- comentar
+    """
+
+    df_train_x = df_train_x.to_numpy()
+    df_train_y = df_train_y.to_numpy()
+
+    # Modelo que usamos para detectar outliers
+    cov = EllipticEnvelope(contamination = 0.05).fit(df_train_x)
+
+    # TODO -- borrar esto si al final no lo usamos
+    #  cov = IsolationForest(n_jobs = n_jobs).fit(df_train_x)
+
+    # Indices que nos dicen si tenemos outliers o no
+    outliers_indixes = cov.predict(df_train_x)
+
+    # Borramos segun estos indices
+    mask = outliers_indixes == 1
+    df_train_x = df_train_x[mask, :]
+    df_train_y = df_train_y[mask]
+
+    return df_train_x, df_train_y
+
 
 def apply_PCA(df_train_X, df_test_X, explained_variation = 0.90, number_components = None):
     """
@@ -258,35 +193,53 @@ def apply_PCA(df_train_X, df_test_X, explained_variation = 0.90, number_componen
 
     return df_transformed_X, df_test_transformed_X
 
-def show_cross_validation(df_train_X, df_train_Y, df_train_X_original):
+def show_cross_validation(df_train_x, df_train_y, df_train_x_original):
     """
     Lanza cross validation y muestra los resultados obtenidos
 
     Parameters:
     ===========
-    df_train_X: dataframe con los datos de entrada, a los que hemos aplicado PCA
+    df_train_X: dataframe con los datos de entrada, a los que hemos aplicado PCA y polinomios
     df_train_Y: dataframe con los datos de salida
     df_train_X_original: dataframe con los datos sin aplicar PCA
     """
 
+    # Por si acaso no hemos hecho previamente la conversion
+    try:
+        df_train_x = df_train_x.to_numpy()
+        df_train_y = df_train_y.to_numpy()
+    except:
+        pass
+
+    print("--> CV -- PCA + Polinimio orden 2")
     # Cross validation para modelos lineales
-    #  cross_validation_linear(df_train_X, df_train_Y, df_train_X_original)
+    cross_validation_linear(df_train_x, df_train_y)
 
     # Cross validation para SVM
-    #  cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original)
+    #  cross_validation_mlp(df_train_x, df_train_y)
 
     # Cross validation para random forest
-    cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original)
+    #  cross_validation_random_forest(df_train_x, df_train_y)
+
+    print("--> CV -- No PCA")
+    # Cross validation para modelos lineales
+    cross_validation_linear(df_train_x_original, df_train_y)
+
+    # Cross validation para SVM
+    #  cross_validation_mlp(df_train_x_original, df_train_y)
+
+    # Cross validation para random forest
+    #  cross_validation_random_forest(df_train_x_original, df_train_y)
 
     wait_for_user_input()
 
-def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
+def cross_validation_linear(df_train_X, df_train_Y):
     # Parametros prefijados
     max_iters = 1e4
     tol = 1e-4
 
     # Kfold cross validation
-    kf = KFold(n_splits=10, shuffle = True)
+    kf = KFold(n_splits=folds, shuffle = True)
 
     # Los dos modelos lineales que vamos a considerar
     lasso = Lasso(max_iter = max_iters, tol = tol)
@@ -294,64 +247,67 @@ def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
 
     # Espacio de busqueda
     parameters = {
-        'alpha': [10**x for x in [-4, -3, -2, -1, 0]] + np.linspace(1, 2, 10).tolist()
+        'alpha': [10**x for x in [-1, 0]] + np.linspace(1, 2, 2).tolist()
     }
 
     # CV para Lasso
-    gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3)
+    gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title = "Lasso")
 
     # CV para Ridge
-    gs = GridSearchCV(ridge, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3)
+    gs = GridSearchCV(ridge, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title = "Ridge")
 
-def cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original):
+def cross_validation_random_forest(df_train_X, df_train_Y):
     # Kfold cross validation
-    kf = KFold(n_splits=10, shuffle = True)
+    kf = KFold(n_splits=folds, shuffle = True)
 
     # Modelo que vamos a considerar
-    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True)
+    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, n_jobs = n_jobs)
 
     # Espacio de busqueda
     parameters = {
         # Numero de arboles (he puesto esto por poner)
-        'n_estimators': np.array([25,50,75,100]),
+        'n_estimators': np.array([50,75,100]),
 
         # TODO -- EXPERIMENTAL -- probar con esto porque creo que hay que fijarlo
-        'max_depth': [None, 60, 100]
+        #'max_depth': [None, 60, 100]
     }
 
-    gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3)
+    gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title="Random Forest")
 
-def cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original):
+def cross_validation_mlp(df_train_X, df_train_Y):
     # Parametros prefijados
     layer_sizes = [(50, ), (75, ), (100,)]
     tol = 1e-4
 
     # Kfold cross validation
-    kf = KFold(n_splits=5, shuffle = True)
+    kf = KFold(n_splits=folds, shuffle = True)
 
     # Modelo que vamos a considerar
     # TODO -- explicar en la memoria lo que es adam y justificar por que lo estamos usando
     # TODO -- poner el parametro max_iter
     # TODO -- comentar que max_iter == 200
-    mlp = MLPRegressor(tol = tol, solver="adam", learning_rate_init = 0.001)
+    # TODO -- usar early stopping para que tarde menos
+    mlp = MLPRegressor(tol = tol, solver="adam", learning_rate_init = 0.001, early_stopping = True)
 
     # Espacio de busqueda
+    # TODO -- MEMORIA -- tanh es usada principalmente para problemas de clasificacion
     parameters = {
-        'alpha': [10**x for x in [-4, -3, -2, -1, 0]],
-        'activation': ['logistic','tanh','relu'],
+        'alpha': [10**x for x in [-3, -2, -1]],
+        # TODO -- probar con tanh???
+        'activation': ['relu' # 'tanh']
         'hidden_layer_sizes': layer_sizes
     }
 
-    gs = GridSearchCV(mlp, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3)
+    gs = GridSearchCV(mlp, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title="MLP")
@@ -376,7 +332,7 @@ if __name__ == "__main__":
 
     # Exploramos el conjunto de entrenamiento
     print("==> Exploramos el conjunto de entrenamiento")
-    explore_training_set(append_series_to_dataframe(df_train_x, df_train_y, column_name=["53"]))
+    explore_training_set(append_series_to_dataframe(df_train_x, df_train_y))
 
     # Borramos los outliers
     print("==> Borrando outliers")
@@ -384,16 +340,11 @@ if __name__ == "__main__":
     # Para saber cuantas filas estamos borrando
     prev_len = len(df_train_x)
 
-    # TODO -- conseguir que esto funcione mas o menos bien
-    # TODO -- BUG -- elimina el 100% de los datos pasemos el std que pasemos
-    df_merged = append_series_to_dataframe(df_train_x, df_train_y, column_name=["53"])
-    df = remove_outliers(df_merged, 1e100, output_cols=[53])
-    df_train_x, df_train_y = split_dataset_into_X_and_Y(df)
-    df_merged = None # Por seguridad, para no usar dataframes desactualizados
+    # TODO -- no se deberia llamar df_train porque ahora no usamos pd.df
+    df_train_x, df_train_y = remove_outliers(df_train_x, df_train_y)
 
-    # TODO -- descomentar
-    # df_train_x, df_train_y = outliers_out(df_train_x, df_train_y)
     print(f"Tamaño tras la limpieza de outliers del train_set: {len(df_train_x)}")
+    print(f"Shapes de X e Y: {df_train_x.shape}, {df_train_y.shape}")
     print(f"Numero de filas eliminadas: {prev_len - len(df_train_x)}")
     print(f"Porcentaje de filas eliminadas: {float(prev_len - len(df_train_x)) / float(prev_len) * 100.0}%")
     wait_for_user_input()
@@ -414,5 +365,10 @@ if __name__ == "__main__":
 
     df_train_x, df_test_x = apply_PCA(df_train_x, df_test_x, explained_variation = 0.99)
 
+    print("==> Aplicando polinomio grado 2 al conjunto PCA")
+    poly = PolynomialFeatures(2)
+    df_train_x = poly.fit_transform(df_train_x)
+
     print("==> Lanzando cross validation")
     show_cross_validation(df_train_x, df_train_y, df_train_original_x)
+

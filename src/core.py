@@ -1,5 +1,9 @@
 import pandas as pd
 
+# Parametros globales de core.py
+# TODO -- poner a True
+WAIT = False
+
 def calculate_stats(df):
     """
     Calcula un nuevo dataframe con las estadisticas relevantes del dataframe pasado como parametro
@@ -39,7 +43,7 @@ def print_full(df):
     print(df)
     pd.reset_option('display.max_rows')
 
-def append_series_to_dataframe(dataframe, series, column_name):
+def append_series_to_dataframe(dataframe, series):
     """
     Añade un pandas.Series a un pandas.Dataframe
     Se usa como operacion inversa a split_dataset_into_X_and_Y, junta el dataframe de caracteristicas de
@@ -57,8 +61,7 @@ def append_series_to_dataframe(dataframe, series, column_name):
     """
 
     df = dataframe.copy()
-    df[column_name] = series.copy()
-
+    df.loc[:, "53"] = series.copy()
     return df
 
 def print_bar(car = "=", width = 80):
@@ -67,7 +70,8 @@ def print_bar(car = "=", width = 80):
 
 def wait_for_user_input():
     """Esperamos a que el usuario pulse una tecla para continuar"""
-    input("Pulse una tecla para CONTINUAR...")
+    if WAIT is True:
+        input("Pulse una tecla para CONTINUAR...")
 
 def split_dataset_into_X_and_Y(df):
     """
