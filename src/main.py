@@ -18,6 +18,9 @@ from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.decomposition import PCA
 from sklearn.linear_model import Lasso, Ridge
 
+# TODO -- borrar esto porque ya no es necesario
+import json
+
 # TODO -- borrar esto y copiar el archivo core aqui
 from core import *
 
@@ -81,7 +84,6 @@ def explore_training_set(df):
     print_full(stats)
     wait_for_user_input()
 
-# Limpieza de datos
 def remove_outliers(df, times_std_dev, output_cols = []):
     """
     Elimina las filas de la matriz representada por df en las que, en alguna columna, el valor de la
@@ -97,6 +99,16 @@ def remove_outliers(df, times_std_dev, output_cols = []):
     ========
     cleaned_df: dataframe al que hemos quitado las filas asociadas a los outliers descritos
     """
+    # Quitamos las columnas de salida al dataframe. Se usa para la siguiente linea en la que hacemos
+    # la seleccion
+    df_not_output = df.copy()
+
+    # Filtramos las columnas, columna por columna
+    for col in output_cols:
+        df_not_output = df_not_output.loc[:, df_not_output.columns != col]
+
+    # Filtramos los outliers, sin tener en cuenta las columnas de variables de salida
+    return df[(np.abs(stats.zscore(df_not_output)) < times_std_dev).all(axis=1)]
 
 def outliers_out(df_x_train, df_y_train):
     """
@@ -145,7 +157,7 @@ def remove_outliers(df, times_std_dev, output_cols = []):
     """
     # Quitamos las columnas de salida al dataframe. Se usa para la siguiente linea en la que hacemos
     # la seleccion
-    df_not_output = df
+    df_not_output = df.copy()
 
     # Filtramos las columnas, columna por columna
     for col in output_cols:
@@ -289,6 +301,14 @@ def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
 
+    # TODO -- temporal
+    # TODO -- guardo el diccionario a un json
+    json = json.dumps(dict)
+    f = open("tmp.json","w")
+    f.write(json)
+    f.close()
+
+
 
 # Funcion principal
 #===============================================================================
@@ -316,8 +336,11 @@ if __name__ == "__main__":
     prev_len = len(df_train_x)
 
     # TODO -- conseguir que esto funcione mas o menos bien
-    #df = remove_outliers(append_series_to_dataframe(df_train_x, df_train_y, column_name=["53"]), 4.0, output_cols=["53"])
-    #df_train_x, df_train_y = split_dataset_into_X_and_Y(df)
+    # TODO -- BUG -- elimina el 100% de los datos pasemos el std que pasemos
+    #  df_merged = append_series_to_dataframe(df_train_x, df_train_y, column_name=["53"])
+    #  df = remove_outliers(df_merged, 1e100, output_cols=[53])
+    #  df_train_x, df_train_y = split_dataset_into_X_and_Y(df)
+    #  df_merged = None # Por seguridad, para no usar dataframes desactualizados
 
     # TODO -- descomentar
     # df_train_x, df_train_y = outliers_out(df_train_x, df_train_y)

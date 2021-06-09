@@ -6,7 +6,7 @@ def calculate_stats(df):
     Parameters:
     ===========
     df: dataframe del que queremos calcular algunas estadisticas
-    
+
     Returns:
     ========
     stats: dataframe con las estadisticas calculadas
@@ -15,7 +15,7 @@ def calculate_stats(df):
     stats["type"] = df.dtypes
     stats["mean"] = df.mean()
     stats["median"] = df.median()
-    
+
     # TODO -- borrar este codigo comentado
     #stats["var"] = df.var()
     stats["std"] = df.std()
@@ -83,3 +83,7 @@ def split_dataset_into_X_and_Y(df):
     """
 
     return df.loc[:, df.columns != "53"], df["53"]
+
+
+def human_readable_results(results):
+    pass
