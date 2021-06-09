@@ -28,9 +28,12 @@
 * [x] Limpieza de los datos
 * [x] Pensar los modelos que queremos usar
 * [ ] Escribir la funcion que elimine outliers con el `z-score` de `Pandas`
-* [ ] Función que tome los resultados de `GridSearchCV` y los muestre por pantalla en un formato legible
-* [ ] Hacer los *cross-validation* faltantes
+* [x] Función que tome los resultados de `GridSearchCV` y los muestre por pantalla en un formato legible
+* [x] Hacer los *cross-validation* faltantes
+* [ ] Adaptar Cross validation a no usar PCA
+* [ ] Adaptar Cross Validation + PCA a polinomios
 * [ ] Entrenar sobre todo el conjunto de datos
+* [ ] Escribir memoria 😥
 
 # Modelos candidatos
 
