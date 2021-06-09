@@ -303,7 +303,7 @@ def cross_validation_mlp(df_train_X, df_train_Y):
     parameters = {
         'alpha': [10**x for x in [-3, -2, -1]],
         # TODO -- probar con tanh???
-        'activation': ['relu' # 'tanh']
+        'activation': ['relu'],
         'hidden_layer_sizes': layer_sizes
     }
 
