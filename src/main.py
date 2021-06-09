@@ -26,7 +26,11 @@ from core import *
 # Carga de los datos
 #===============================================================================
 def load_data():
-    """Cargamos todos los datos en un unico dataframe. Tanto de training como de test"""
+    """
+    Cargamos todos los datos en un unico dataframe. Tanto de training como de test
+        El codigo esta basado en:
+        https://stackoverflow.com/questions/20906474/import-multiple-csv-files-into-pandas-and-concatenate-into-one-dataframe
+    """
     data_files = [
         "./datos/Training/Features_Variant_2.csv",
         "./datos/Training/Features_Variant_3.csv",
@@ -44,11 +48,8 @@ def load_data():
         "./datos/Testing/TestSet/Test_Case_10.csv",
     ]
 
-    df = pd.read_csv("./datos/Training/Features_Variant_1.csv", header = None)
-    for data_file in data_files:
-        current_df = pd.read_csv(data_file, header = None)
-        df.append(current_df)
-
+    dfs = (pd.read_csv(data_file, header = None) for data_file in data_files)
+    df = pd.concat(dfs, ignore_index=True)
     return df
 
 def split_train_test(df):
@@ -369,6 +370,9 @@ if __name__ == "__main__":
     # Separamos en training y test
     print("==> Separando en train y test")
     df_train_x, df_test_x, df_train_y, df_test_y = split_train_test(df)
+    print(f"--> Nº datos entrenamiento: {len(df_train_x)}")
+    print(f"--> Nº datos test: {len(df_test_x)}")
+
 
     # Exploramos el conjunto de entrenamiento
     print("==> Exploramos el conjunto de entrenamiento")
@@ -382,10 +386,10 @@ if __name__ == "__main__":
 
     # TODO -- conseguir que esto funcione mas o menos bien
     # TODO -- BUG -- elimina el 100% de los datos pasemos el std que pasemos
-    #  df_merged = append_series_to_dataframe(df_train_x, df_train_y, column_name=["53"])
-    #  df = remove_outliers(df_merged, 1e100, output_cols=[53])
-    #  df_train_x, df_train_y = split_dataset_into_X_and_Y(df)
-    #  df_merged = None # Por seguridad, para no usar dataframes desactualizados
+    df_merged = append_series_to_dataframe(df_train_x, df_train_y, column_name=["53"])
+    df = remove_outliers(df_merged, 1e100, output_cols=[53])
+    df_train_x, df_train_y = split_dataset_into_X_and_Y(df)
+    df_merged = None # Por seguridad, para no usar dataframes desactualizados
 
     # TODO -- descomentar
     # df_train_x, df_train_y = outliers_out(df_train_x, df_train_y)
