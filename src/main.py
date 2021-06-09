@@ -272,10 +272,10 @@ def show_cross_validation(df_train_X, df_train_Y, df_train_X_original):
     cross_validation_linear(df_train_X, df_train_Y, df_train_X_original)
 
     # Cross validation para random forest
-    #  cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original)
+    cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original)
 
     # Cross validation para SVM
-    #  cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original)
+    cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original)
 
     wait_for_user_input()
 
@@ -293,7 +293,7 @@ def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
 
     # Espacio de busqueda
     parameters = {
-        'alpha': np.logspace(-4, 0, 10)
+        'alpha': [10**(-x) for x in [-4, -3, -2, -1, 0]]
     }
 
     # CV para Lasso
@@ -344,7 +344,7 @@ def cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original):
 
     # Espacio de busqueda
     parameters = {
-        'alpha': np.logspace(-4, 0, 10),
+        'alpha': [10**(-x) for x in [-4, -3, -2, -1, 0]],
         'activacion': ['logistic','tanh','relu'],
         'hidden_layer_sizes': layer_sizes
     }
