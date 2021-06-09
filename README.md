@@ -27,11 +27,11 @@
 * [x] Juntar los datasets
 * [x] Limpieza de los datos
 * [x] Pensar los modelos que queremos usar
-* [ ] Escribir la funcion que elimine outliers con el `z-score` de `Pandas`
+* [x] Escribir la funcion que elimine outliers con el `z-score` de `Pandas`
 * [x] Función que tome los resultados de `GridSearchCV` y los muestre por pantalla en un formato legible
 * [x] Hacer los *cross-validation* faltantes
-* [ ] Adaptar Cross validation a no usar PCA
-* [ ] Adaptar Cross Validation + PCA a polinomios
+* [x] Adaptar Cross validation a no usar PCA
+* [x] Adaptar Cross Validation + PCA a polinomios
 * [ ] Entrenar sobre todo el conjunto de datos
 * [ ] Escribir memoria 😥
 
@@ -50,3 +50,15 @@
 * Support vector machine, en los apuntes, ponía que no tenía mucho éxito con regresión
 * Poner en la memoria cómo hemos hecho `unzip` en la carpeta de datos
 * Hay que explicar lo que hace LocalOutlierFactor: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html
+
+# Consejos Mesejo
+
+* Cómo hacer que entrene bien:
+    * Escoger bien las épocas, aplicar early stopping
+    * Ser astutos a la hora de escoger parámetros
+    * Con curvas de aprendizaje podemos saber cuándo parar los entrenamientos
+    * Normalizar los datos acelera los entrenamientos
+* Fijarnos en las curvas de entrenamiento: curvas de train y val a lo largo de las epochs
+* A Nicolás le gustará que mostremos las curvas de aprendizaje
+* Mas del 5% de los ejemplos fuera con outliers, está probablemente mal
+* Podemos reducir a 70% - 30% de los datos para training - testing
