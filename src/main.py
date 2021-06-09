@@ -269,13 +269,13 @@ def show_cross_validation(df_train_X, df_train_Y, df_train_X_original):
     """
 
     # Cross validation para modelos lineales
-    cross_validation_linear(df_train_X, df_train_Y, df_train_X_original)
+    #  cross_validation_linear(df_train_X, df_train_Y, df_train_X_original)
+
+    # Cross validation para SVM
+    #  cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original)
 
     # Cross validation para random forest
     cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original)
-
-    # Cross validation para SVM
-    cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original)
 
     wait_for_user_input()
 
@@ -293,17 +293,17 @@ def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
 
     # Espacio de busqueda
     parameters = {
-        'alpha': [10**(-x) for x in [-4, -3, -2, -1, 0]]
+        'alpha': [10**x for x in [-4, -3, -2, -1, 0]] + np.linspace(1, 2, 10).tolist()
     }
 
     # CV para Lasso
-    gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
+    gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title = "Lasso")
 
     # CV para Ridge
-    gs = GridSearchCV(ridge, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
+    gs = GridSearchCV(ridge, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title = "Ridge")
@@ -324,32 +324,33 @@ def cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original):
         'max_depth': [None, 60, 100]
     }
 
-    gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
+    gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
-
+    human_readable_results(results, title="Random Forest")
 
 def cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original):
     # Parametros prefijados
-    layer_sizes = [(50), (75), (100)]
-    max_iters = 1e4
+    layer_sizes = [(50, ), (75, ), (100,)]
     tol = 1e-4
 
     # Kfold cross validation
-    kf = KFold(n_splits=10, shuffle = True)
+    kf = KFold(n_splits=5, shuffle = True)
 
     # Modelo que vamos a considerar
     # TODO -- explicar en la memoria lo que es adam y justificar por que lo estamos usando
-    mlp = MLPRegressor(hidden_layer_sizes = layers, max_iter = max_iters, tol = tol, solver="adam", learning_rate = 0.001)
+    # TODO -- poner el parametro max_iter
+    # TODO -- comentar que max_iter == 200
+    mlp = MLPRegressor(tol = tol, solver="adam", learning_rate_init = 0.001)
 
     # Espacio de busqueda
     parameters = {
-        'alpha': [10**(-x) for x in [-4, -3, -2, -1, 0]],
-        'activacion': ['logistic','tanh','relu'],
+        'alpha': [10**x for x in [-4, -3, -2, -1, 0]],
+        'activation': ['logistic','tanh','relu'],
         'hidden_layer_sizes': layer_sizes
     }
 
-    gs = GridSearchCV(mlp, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
+    gs = GridSearchCV(mlp, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title="MLP")
