@@ -299,10 +299,17 @@ def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
         'alpha': np.logspace(-4, 0, 10)
     }
 
-    # TODO -- Falta el ridge
+    # CV para Lasso
     gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
+    human_readable_results(results, title = "Lasso")
+
+    # CV para Ridge
+    gs = GridSearchCV(ridge, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
+    gs.fit(df_train_X, df_train_Y)
+    results = gs.cv_results_
+    human_readable_results(results, title = "Ridge")
 
     # TODO -- temporal
     # TODO -- guardo el diccionario a un json
@@ -317,12 +324,15 @@ def cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original):
     kf = KFold(n_splits=10, shuffle = True)
 
     # Modelo que vamos a considerar
-    randomForest = RandomForestRegressor()
+    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True)
 
     # Espacio de busqueda
     parameters = {
         # Numero de arboles (he puesto esto por poner)
-        'n_estimators': np.array([25,50,75,100])
+        'n_estimators': np.array([25,50,75,100]),
+
+        # TODO -- EXPERIMENTAL -- probar con esto porque creo que hay que fijarlo
+        'max_depth': [None, 60, 100]
     }
 
     gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
@@ -332,7 +342,7 @@ def cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original):
 
 def cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original):
     # Parametros prefijados
-    layers = 3
+    layer_sizes = [(50), (75), (100)]
     max_iters = 1e4
     tol = 1e-4
 
@@ -340,17 +350,20 @@ def cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original):
     kf = KFold(n_splits=10, shuffle = True)
 
     # Modelo que vamos a considerar
-    mlp = MLPRegressor(hidden_layer_sizes = layers-2, max_iter = max_iters, tol = tol)
+    # TODO -- explicar en la memoria lo que es adam y justificar por que lo estamos usando
+    mlp = MLPRegressor(hidden_layer_sizes = layers, max_iter = max_iters, tol = tol, solver="adam", learning_rate = 0.001)
 
     # Espacio de busqueda
     parameters = {
-        'alpha': np.logspace(-4, 0, 10)
-        'activacion': ['identity','logistic','tanh','relu']
+        'alpha': np.logspace(-4, 0, 10),
+        'activacion': ['logistic','tanh','relu'],
+        'hidden_layer_sizes': layer_sizes
     }
 
     gs = GridSearchCV(mlp, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
+    human_readable_results(results, title="MLP")
 
 # Funcion principal
 #===============================================================================
