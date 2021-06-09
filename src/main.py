@@ -17,6 +17,8 @@ from sklearn.neighbors import LocalOutlierFactor
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.decomposition import PCA
 from sklearn.linear_model import Lasso, Ridge
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.neural_network import MLPRegressor
 
 # TODO -- borrar esto porque ya no es necesario
 import json
@@ -297,6 +299,7 @@ def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
         'alpha': np.logspace(-4, 0, 10)
     }
 
+    # TODO -- Falta el ridge
     gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
@@ -309,6 +312,45 @@ def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
     f.close()
 
 
+def cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original):
+    # Kfold cross validation
+    kf = KFold(n_splits=10, shuffle = True)
+
+    # Modelo que vamos a considerar
+    randomForest = RandomForestRegressor()
+
+    # Espacio de busqueda
+    parameters = {
+        # Numero de arboles (he puesto esto por poner)
+        'n_estimators': np.array([25,50,75,100])
+    }
+
+    gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
+    gs.fit(df_train_X, df_train_Y)
+    results = gs.cv_results_
+
+
+def cross_validation_mlp(df_train_X, df_train_Y, df_train_X_original):
+    # Parametros prefijados
+    layers = 3
+    max_iters = 1e4
+    tol = 1e-4
+
+    # Kfold cross validation
+    kf = KFold(n_splits=10, shuffle = True)
+
+    # Modelo que vamos a considerar
+    mlp = MLPRegressor(hidden_layer_sizes = layers-2, max_iter = max_iters, tol = tol)
+
+    # Espacio de busqueda
+    parameters = {
+        'alpha': np.logspace(-4, 0, 10)
+        'activacion': ['identity','logistic','tanh','relu']
+    }
+
+    gs = GridSearchCV(mlp, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False)
+    gs.fit(df_train_X, df_train_Y)
+    results = gs.cv_results_
 
 # Funcion principal
 #===============================================================================
