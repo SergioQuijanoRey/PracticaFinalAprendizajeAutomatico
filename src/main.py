@@ -20,9 +20,6 @@ from sklearn.linear_model import Lasso, Ridge
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.neural_network import MLPRegressor
 
-# TODO -- borrar esto porque ya no es necesario
-import json
-
 # TODO -- borrar esto y copiar el archivo core aqui
 from core import *
 
@@ -310,14 +307,6 @@ def cross_validation_linear(df_train_X, df_train_Y, df_train_X_original):
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title = "Ridge")
-
-    # TODO -- temporal
-    # TODO -- guardo el diccionario a un json
-    json = json.dumps(dict)
-    f = open("tmp.json","w")
-    f.write(json)
-    f.close()
-
 
 def cross_validation_random_forest(df_train_X, df_train_Y, df_train_X_original):
     # Kfold cross validation

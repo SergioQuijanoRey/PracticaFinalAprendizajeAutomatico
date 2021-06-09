@@ -85,5 +85,19 @@ def split_dataset_into_X_and_Y(df):
     return df.loc[:, df.columns != "53"], df["53"]
 
 
-def human_readable_results(results):
-    pass
+def human_readable_results(results, title = ""):
+    print(f"Resultados para {title}")
+    print_bar()
+    print("")
+
+    # Guardamos los resultados que nos interesan
+    params = results["params"]
+    mean_test_score = results["mean_test_score"]
+    std_test_score = results["std_test_score"]
+
+    # Mostramos los resultados
+    for param, mean_score, std_score in zip(params, mean_test_score, std_test_score):
+        print(f"\t--> Param: {param}, mean_score: {mean_score}, std_score: {std_score}")
+    print("")
+
+    wait_for_user_input()
