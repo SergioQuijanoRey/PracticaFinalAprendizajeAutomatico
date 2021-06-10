@@ -20,6 +20,7 @@ from sklearn.linear_model import Lasso, Ridge
 from sklearn.ensemble import RandomForestRegressor, IsolationForest
 from sklearn.neural_network import MLPRegressor
 from sklearn.covariance import EllipticEnvelope
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 
 # TODO -- borrar esto y copiar el archivo core aqui
 from core import *
@@ -323,6 +324,60 @@ def cross_validation_mlp(df_train_X, df_train_Y):
     results = gs.cv_results_
     human_readable_results(results, title="MLP")
 
+def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
+    """TODO -- documentar este codigo"""
+    # Realizamos las predicciones con el modelo
+    train_predictions = model.predict(df_train_x)
+    test_predictions = model.predict(df_test_x)
+
+    train_r2 = r2_score(df_train_y, train_predictions)
+    train_mse = mean_squared_error(df_train_y, train_predictions)
+    train_mae = mean_absolute_error(df_train_y, train_predictions)
+
+    test_r2 = r2_score(df_test_y, test_predictions)
+    test_mse = mean_squared_error(df_test_y, test_predictions)
+    test_mae = mean_absolute_error(df_test_y, test_predictions)
+
+    # Mostramos los resultados
+    print("--> Resultados en training set:")
+    print(f"\t--> MSE: {train_mse}")
+    print(f"\t--> MAE: {train_mae}")
+    print(f"\t--> R2: {train_r2}")
+    print("")
+    print("--> Resultados en testing set:")
+    print(f"\t--> MSE: {test_mse}")
+    print(f"\t--> MAE: {test_mae}")
+    print(f"\t--> R2: {test_r2}")
+    print("")
+
+def learning_curve(model, df_train_x, df_train_y, df_test_x, df_test_y, number_of_splits = 10, error_score = mean_squared_error):
+    """TODO -- documentar"""
+
+    training_errors = []
+    testing_errors = []
+
+    for i in range(number_of_splits):
+        print(f"--> Empezando el paso {i}")
+        # Datos con los que trabajamos en este paso
+        size = int((i / number_of_splits) * len(df_train_x))
+        current_train_x = df_train_x[:size]
+        current_train_y = df_test_y[:size]
+
+        # Entrenamos en este paso
+        model.fit(current_train_x, current_train_y)
+
+        # Calculamos los errores
+        curr_training_error = error_score(current_train_y, model.predict(current_train_x))
+        curr_test_error = error_score(df_test_x, model.predict(df_test_y))
+        training_errors.append(current_train_x)
+        testing_errors.append(curr_test_error)
+
+    plt.title("Curva de aprendizaje")
+    plt.plot(list(range(0, number_of_splits)), training_errors, 'tab:blue', label="Training Error")
+    plt.plot(list(range(0, number_of_splits)), testing_errors, 'tab:orange', label="Testing Error")
+    plt.show()
+    wait_for_user_input()
+
 # Funcion principal
 #===============================================================================
 if __name__ == "__main__":
@@ -386,4 +441,22 @@ if __name__ == "__main__":
 
     print("==> Lanzando cross validation")
     show_cross_validation(df_train_x, df_train_y, df_train_original_x)
+
+    print("==> Entrenando sobre todo el conjunto de datos")
+    n_estimators = 100
+    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, max_features = "sqrt", n_estimators = n_estimators, n_jobs = n_jobs)
+    print(f"--> Elegimos como modelo Random Forest con n_estimators = {n_estimators}")
+    print(f"--> Como conjunto de datos elegimos el conjunto al que no aplicamos PCA ni pol_features")
+    print(f"--> Entrenando sobre todo el conjunto de datos")
+    model.fit(df_train_x_original, df_train_y)
+
+    # TODO -- borrar esto!!!!
+    #  import pickle
+    #  pickle.dumps(model, "pruebas.bin")
+
+    print(f"--> Modelo entrenado, mostrando resultados")
+    show_results(model, df_train_x_original, df_train_y, df_test_original_x, df_test_y)
+
+    print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
+    learning_curve(model, df_train_x_original, df_train_y, df_test_x_original, df_test_y, number_of_splits = 10, error_score = mean_squared_error)
 
