@@ -34,6 +34,7 @@
 * [x] Adaptar Cross Validation + PCA a polinomios
 * [ ] Entrenar sobre todo el conjunto de datos
 * [ ] Escribir memoria 😥
+* [ ] Preguntar a Mesejo lo de las learning curves
 
 # Modelos candidatos
 
