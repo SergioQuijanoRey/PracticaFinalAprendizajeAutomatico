@@ -36,6 +36,10 @@ Resultados para Random Forest
 
 	--> Param: {'n_estimators': 50}, mean_score: -451.23595884429267, std_score: 101.68327332306899
 	--> Param: {'n_estimators': 75}, mean_score: -447.9929522123837, std_score: 86.40509736923316
+	--> Param: {'n_estimators': 80}, mean_score: -437.98085178670124, std_score: 240.31673487274765
+	--> Param: {'n_estimators': 85}, mean_score: -438.45958111095615, std_score: 245.45760156726104
+	--> Param: {'n_estimators': 90}, mean_score: -438.7669174225559, std_score: 236.44154118142842
+	--> Param: {'n_estimators': 95}, mean_score: -436.7201620273151, std_score: 241.84817791082762
 	--> Param: {'n_estimators': 100}, mean_score: -427.4321173203906, std_score: 89.16186529675821
     # NO CONSIGUE ENTRENAR LOS VALORES:
 	# --> Param: {'n_estimators': 150},
@@ -77,6 +81,10 @@ Resultados para Random Forest
 
 	--> Param: {'n_estimators': 50}, mean_score: -296.0560648822887, std_score: 43.519336788476686
 	--> Param: {'n_estimators': 75}, mean_score: -285.71034811407105, std_score: 36.044800637258575
+	--> Param: {'n_estimators': 80}, mean_score: -308.76332941607643, std_score: 123.64159012103657
+	--> Param: {'n_estimators': 85}, mean_score: -308.55444345651415, std_score: 123.60420196039425
+	--> Param: {'n_estimators': 90}, mean_score: -312.56894789638875, std_score: 119.23605843188962
+	--> Param: {'n_estimators': 95}, mean_score: -314.059140945007, std_score: 123.16442287845635
 	--> Param: {'n_estimators': 100}, mean_score: -280.9575216263441, std_score: 35.46779460138012
 	--> Param: {'n_estimators': 150}, mean_score: -283.9057569309148, std_score: 178.1098589280261
 	--> Param: {'n_estimators': 200}, mean_score: -284.0305611842203, std_score: 175.86702205191798
