@@ -21,6 +21,7 @@ from sklearn.ensemble import RandomForestRegressor, IsolationForest
 from sklearn.neural_network import MLPRegressor
 from sklearn.covariance import EllipticEnvelope
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from sklearn.dummy import DummyRegressor
 
 # TODO -- borrar esto y copiar el archivo core aqui
 from core import *
@@ -43,9 +44,6 @@ def load_data():
         "./datos/Testing/TestSet/Test_Case_1.csv",
     ]
 
-    # Seleccionamos la primera variante
-    variant = 1
-
     dfs = (pd.read_csv(data_file, header = None) for data_file in data_files)
     df = pd.concat(dfs, ignore_index=True)
     return df
@@ -57,7 +55,7 @@ def split_train_test(df):
     y = df.iloc[:, -1]
 
     # Dividimos en training y test (80% y 20%)
-    x_train, x_test, y_train, y_test = train_test_split(x,y, test_size = 0.2, shuffle=True)
+    x_train, x_test, y_train, y_test = train_test_split(x,y, test_size = 0.2, shuffle=True, random_state = 123456789)
     return x_train, x_test, y_train, y_test
 
 # Exploracion de los datos
@@ -121,9 +119,6 @@ def remove_outliers(df_train_x, df_train_y):
 
     # Modelo que usamos para detectar outliers
     cov = EllipticEnvelope(contamination = 0.05).fit(df_train_x)
-
-    # TODO -- borrar esto si al final no lo usamos
-    #  cov = IsolationForest(n_jobs = n_jobs).fit(df_train_x)
 
     # Indices que nos dicen si tenemos outliers o no
     outliers_indixes = cov.predict(df_train_x)
@@ -274,20 +269,12 @@ def cross_validation_random_forest(df_train_X, df_train_Y):
     kf = KFold(n_splits=folds, shuffle = True)
 
     # Modelo que vamos a considerar
-    # max_features = sqrt porque se dice que usemos los valores por defecto que vienen en las
-    # transparencias de teoria
-    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, max_features = "sqrt", n_jobs = n_jobs)
+    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, n_jobs = n_jobs)
 
     # Espacio de busqueda
     parameters = {
-        # Numero de arboles (he puesto esto por poner)
-        # TODO -- en el codigo final poner los parametros que hemos explorado en una sola lista
-        #  'n_estimators': np.array([50,75,100]),
-        #  'n_estimators': np.array([150, 200, 250]),
-        'n_estimators': np.array([80, 85, 90, 95])
-
-        # TODO -- EXPERIMENTAL -- probar con esto porque creo que hay que fijarlo
-        #'max_depth': [None, 60, 100]
+        # Numero de arboles
+        'n_estimators': np.array([50, 75, 80, 85, 90, 95, 100, 150, 200])
     }
 
     gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
@@ -326,9 +313,14 @@ def cross_validation_mlp(df_train_X, df_train_Y):
 
 def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     """TODO -- documentar este codigo"""
+    # Modelo Dummy para usarlo como baseline
+    dummy = DummyRegressor(strategy="mean")
+    dummy.fit(df_train_x, df_train_y)
+
     # Realizamos las predicciones con el modelo
     train_predictions = model.predict(df_train_x)
     test_predictions = model.predict(df_test_x)
+    dummy_predictions = model.predict(df_test_x)
 
     train_r2 = r2_score(df_train_y, train_predictions)
     train_mse = mean_squared_error(df_train_y, train_predictions)
@@ -337,6 +329,10 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     test_r2 = r2_score(df_test_y, test_predictions)
     test_mse = mean_squared_error(df_test_y, test_predictions)
     test_mae = mean_absolute_error(df_test_y, test_predictions)
+
+    dummy_r2 = r2_score(df_dummy_y, dummy_predictions)
+    dummy_mse = mean_squared_error(df_dummy_y, dummy_predictions)
+    dummy_mae = mean_absolute_error(df_dummy_y, dummy_predictions)
 
     # Mostramos los resultados
     print("--> Resultados en training set:")
@@ -349,32 +345,42 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     print(f"\t--> MAE: {test_mae}")
     print(f"\t--> R2: {test_r2}")
     print("")
+    print("--> Resultados en dummying set:")
+    print(f"\t--> MSE: {dummy_mse}")
+    print(f"\t--> MAE: {dummy_mae}")
+    print(f"\t--> R2: {dummy_r2}")
+    print("")
 
-def learning_curve(model, df_train_x, df_train_y, df_test_x, df_test_y, number_of_splits = 10, error_score = mean_squared_error):
-    """TODO -- documentar"""
+def learning_curve(model, df_train_x, df_train_y, df_test_x, df_test_y, number_of_splits = 10):
+    """TODO -- documentar
+    Codigo inspirado de: https://github.com/rasbt/mlxtend/blob/master/mlxtend/plotting/learning_curves.py
+    """
 
     training_errors = []
     testing_errors = []
 
-    for i in range(number_of_splits):
+    ranges = [int(i) for i in np.linspace(0, df_train_x.shape[0], number_of_splits)][1:]
+    for i, range in enumerate(ranges):
         print(f"--> Empezando el paso {i}")
         # Datos con los que trabajamos en este paso
-        size = int((i / number_of_splits) * len(df_train_x))
-        current_train_x = df_train_x[:size]
-        current_train_y = df_test_y[:size]
+        current_train_x = df_train_x[:range]
+        current_train_y = df_train_y[:range]
 
         # Entrenamos en este paso
         model.fit(current_train_x, current_train_y)
 
         # Calculamos los errores
-        curr_training_error = error_score(current_train_y, model.predict(current_train_x))
-        curr_test_error = error_score(df_test_x, model.predict(df_test_y))
-        training_errors.append(current_train_x)
+        curr_training_error = mean_squared_error(current_train_y, model.predict(current_train_x))
+        curr_test_error = mean_squared_error(df_test_y, model.predict(df_test_x))
+        training_errors.append(curr_training_error)
         testing_errors.append(curr_test_error)
 
     plt.title("Curva de aprendizaje")
-    plt.plot(list(range(0, number_of_splits)), training_errors, 'tab:blue', label="Training Error")
-    plt.plot(list(range(0, number_of_splits)), testing_errors, 'tab:orange', label="Testing Error")
+    plt.plot(ranges, training_errors, "tab:blue", label = "Error de entrenamiento")
+    plt.plot(ranges, testing_errors, "tab:orange", label = "Error de testing")
+    plt.legend(loc='upper right',shadow=True)
+    plt.xlabel("Cantidad de datos en los que se entrena")
+    plt.ylabel(f"Error Cuadratico medio")
     plt.show()
     wait_for_user_input()
 
@@ -407,7 +413,8 @@ if __name__ == "__main__":
     prev_len = len(df_train_x)
 
     # TODO -- no se deberia llamar df_train porque ahora no usamos pd.df
-    df_train_x, df_train_y = remove_outliers(df_train_x, df_train_y)
+    # TODO -- descomentar
+    #  df_train_x, df_train_y = remove_outliers(df_train_x, df_train_y)
 
     print(f"Tamaño tras la limpieza de outliers del train_set: {len(df_train_x)}")
     print(f"Shapes de X e Y: {df_train_x.shape}, {df_train_y.shape}")
@@ -440,23 +447,21 @@ if __name__ == "__main__":
     df_train_x, df_test_x = standarize_dataset(df_train_x, df_test_x)
 
     print("==> Lanzando cross validation")
-    show_cross_validation(df_train_x, df_train_y, df_train_original_x)
+    # TODO -- descomentar
+    #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
 
     print("==> Entrenando sobre todo el conjunto de datos")
-    n_estimators = 100
-    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, max_features = "sqrt", n_estimators = n_estimators, n_jobs = n_jobs)
+    n_estimators = 95
+    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, n_estimators = n_estimators, n_jobs = n_jobs)
+
     print(f"--> Elegimos como modelo Random Forest con n_estimators = {n_estimators}")
     print(f"--> Como conjunto de datos elegimos el conjunto al que no aplicamos PCA ni pol_features")
     print(f"--> Entrenando sobre todo el conjunto de datos")
-    model.fit(df_train_x_original, df_train_y)
-
-    # TODO -- borrar esto!!!!
-    #  import pickle
-    #  pickle.dumps(model, "pruebas.bin")
+    model.fit(df_train_original_x, df_train_y)
 
     print(f"--> Modelo entrenado, mostrando resultados")
-    show_results(model, df_train_x_original, df_train_y, df_test_original_x, df_test_y)
+    show_results(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
 
     print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
-    learning_curve(model, df_train_x_original, df_train_y, df_test_x_original, df_test_y, number_of_splits = 10, error_score = mean_squared_error)
+    learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
 
