@@ -369,10 +369,10 @@ if __name__ == "__main__":
     df_train_original_x = df_train_x.copy()
     df_test_original_x = df_test_x.copy()
 
-    df_train_x, df_test_x = apply_PCA(df_train_x, df_test_x, explained_variation = 0.90)
+    df_train_x, df_test_x = apply_PCA(df_train_x, df_test_x, explained_variation = 0.99)
 
     print("==> Aplicando polinomio grado 2 al conjunto PCA")
-    poly = PolynomialFeatures(3)
+    poly = PolynomialFeatures(2)
     df_train_x = poly.fit_transform(df_train_x)
     df_test_x = poly.transform(df_test_x)
 
