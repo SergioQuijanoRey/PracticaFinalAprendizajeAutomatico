@@ -37,6 +37,10 @@ Resultados para Random Forest
 	--> Param: {'n_estimators': 50}, mean_score: -451.23595884429267, std_score: 101.68327332306899
 	--> Param: {'n_estimators': 75}, mean_score: -447.9929522123837, std_score: 86.40509736923316
 	--> Param: {'n_estimators': 100}, mean_score: -427.4321173203906, std_score: 89.16186529675821
+    # NO CONSIGUE ENTRENAR LOS VALORES:
+	# --> Param: {'n_estimators': 150},
+	# --> Param: {'n_estimators': 200},
+	# --> Param: {'n_estimators': 250},
 
 --> CV -- No PCA
 Resultados para Lasso
