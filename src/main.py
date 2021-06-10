@@ -368,6 +368,10 @@ if __name__ == "__main__":
     print("==> Aplicando polinomio grado 2 al conjunto PCA")
     poly = PolynomialFeatures(2)
     df_train_x = poly.fit_transform(df_train_x)
+    df_test_x = poly.transform(df_test_x)
+
+    # Tenemos que estandarizar el conjunto PCA + Pol para que el entrenamiento no tarde tanto
+    df_train_x, df_test_x = standarize_dataset(df_train_x, df_test_x)
 
     print("==> Lanzando cross validation")
     show_cross_validation(df_train_x, df_train_y, df_train_original_x)
