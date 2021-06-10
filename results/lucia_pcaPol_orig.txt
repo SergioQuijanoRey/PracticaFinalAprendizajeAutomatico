@@ -36,10 +36,12 @@ Resultados para Random Forest
 
 	--> Param: {'n_estimators': 50}, mean_score: -451.23595884429267, std_score: 101.68327332306899
 	--> Param: {'n_estimators': 75}, mean_score: -447.9929522123837, std_score: 86.40509736923316
+	# NO CONSIGUE ENTRENAR LOS VALORES (ESTO ERA CON SQRT)
 	--> Param: {'n_estimators': 80}, mean_score: -437.98085178670124, std_score: 240.31673487274765
 	--> Param: {'n_estimators': 85}, mean_score: -438.45958111095615, std_score: 245.45760156726104
 	--> Param: {'n_estimators': 90}, mean_score: -438.7669174225559, std_score: 236.44154118142842
 	--> Param: {'n_estimators': 95}, mean_score: -436.7201620273151, std_score: 241.84817791082762
+	# EL DE 100 SI 
 	--> Param: {'n_estimators': 100}, mean_score: -427.4321173203906, std_score: 89.16186529675821
     # NO CONSIGUE ENTRENAR LOS VALORES:
 	# --> Param: {'n_estimators': 150},
