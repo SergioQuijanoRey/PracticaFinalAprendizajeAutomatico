@@ -1,3 +1,5 @@
+# El orden del polinomio fue 2 con PCA == 0.99
+
 Resultados para Lasso
 ================================================================================
 
