@@ -1,0 +1,47 @@
+Resultados para Lasso
+================================================================================
+
+        --> Param: {'alpha': 0.1}, mean_score: -479.9335704414069, std_score: 257.6131725307163
+        --> Param: {'alpha': 1}, mean_score: -483.5653077158562, std_score: 265.9866371107252
+        --> Param: {'alpha': 1.0}, mean_score: -483.5653077158562, std_score: 265.9866371107252
+        --> Param: {'alpha': 2.0}, mean_score: -492.58800532713883, std_score: 274.64070993138785
+
+Resultados para Ridge
+================================================================================
+
+        --> Param: {'alpha': 0.1}, mean_score: -476.9587937315208, std_score: 162.1363925021473
+        --> Param: {'alpha': 1}, mean_score: -476.91533669496204, std_score: 162.31879443932127
+        --> Param: {'alpha': 1.0}, mean_score: -476.91533669496204, std_score: 162.31879443932127
+        --> Param: {'alpha': 2.0}, mean_score: -476.9227098886948, std_score: 162.45591962780696
+
+Resultados para MLP
+================================================================================
+
+        --> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (50,)}, mean_score:
+ -358.7959968341077, std_score: 140.75626197213148
+        --> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (75,)}, mean_score:
+ -367.3614080659543, std_score: 140.9918666145103
+        --> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (100,)}, mean_score
+: -347.98577889168774, std_score: 127.67776973050059
+        --> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (50,)}, mean_score:
+-356.77576947579155, std_score: 136.83622524658236
+        --> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (75,)}, mean_score:
+-372.84384917662044, std_score: 155.46944439778687
+        --> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (100,)}, mean_score:
+ -360.8045430256314, std_score: 142.15012616900452
+        --> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (50,)}, mean_score: -
+346.92732680997085, std_score: 135.48712743138427
+        --> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (75,)}, mean_score: -
+354.3288860461256, std_score: 137.64227131247344
+        --> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (100,)}, mean_score:
+-358.4187745671762, std_score: 133.0285031382638
+
+Resultados para Random Forest
+================================================================================
+
+        --> Param: {'n_estimators': 50}, mean_score: -285.49176278902917, std_score: 75.23080823142
+413
+        --> Param: {'n_estimators': 75}, mean_score: -286.69134612189566, std_score: 68.73922045841
+864
+        --> Param: {'n_estimators': 100}, mean_score: -287.5571582880312, std_score: 71.13854998247
+109

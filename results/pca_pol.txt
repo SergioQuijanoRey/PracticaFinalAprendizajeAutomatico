@@ -1,0 +1,37 @@
+Resultados para Lasso
+================================================================================
+
+        --> Param: {'alpha': 0.1}, mean_score: -419.2673809132777, std_score: 225.15659238308385
+        --> Param: {'alpha': 1}, mean_score: -464.6187966311992, std_score: 249.55577567707937
+        --> Param: {'alpha': 1.0}, mean_score: -464.6187966311992, std_score: 249.55577567707937
+        --> Param: {'alpha': 2.0}, mean_score: -507.60630844096374, std_score: 271.7761164936137
+
+Resultados para Ridge
+================================================================================
+
+        --> Param: {'alpha': 0.1}, mean_score: -181114.51556901986, std_score: 360696.9220907404
+        --> Param: {'alpha': 1}, mean_score: -9371.651280126056, std_score: 17479.564145955053
+        --> Param: {'alpha': 1.0}, mean_score: -9371.651280126056, std_score: 17479.564145955053
+        --> Param: {'alpha': 2.0}, mean_score: -3029.68901220368, std_score: 5154.762474131325
+
+Resultados para MLP
+================================================================================
+
+        --> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (50,)}, mean_score:
+-428.6105393589498, std_score: 198.1735053298879
+        --> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (75,)}, mean_score:
+-398.36502002691134, std_score: 119.10264315706686
+        --> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (100,)}, mean_score:
+ -393.70318816307156, std_score: 123.24839794740392
+        --> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (50,)}, mean_score: -
+411.8192631395301, std_score: 120.50278590694275
+        --> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (75,)}, mean_score: -
+409.7621793801263, std_score: 133.67770913955655
+        --> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (100,)}, mean_score:
+-404.56643687474053, std_score: 136.0593540128945
+        --> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (50,)}, mean_score: -4
+18.10131562357736, std_score: 158.52367045117404
+        --> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (75,)}, mean_score: -3
+85.7703215462957, std_score: 119.04016440631547
+        --> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (100,)}, mean_score: -
+394.87595281944925, std_score: 112.59749713199231
