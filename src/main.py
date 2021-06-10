@@ -21,6 +21,7 @@ from sklearn.ensemble import RandomForestRegressor, IsolationForest
 from sklearn.neural_network import MLPRegressor
 from sklearn.covariance import EllipticEnvelope
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from sklearn.dummy import DummyRegressor
 
 # TODO -- borrar esto y copiar el archivo core aqui
 from core import *
@@ -43,9 +44,6 @@ def load_data():
         "./datos/Testing/TestSet/Test_Case_1.csv",
     ]
 
-    # Seleccionamos la primera variante
-    variant = 1
-
     dfs = (pd.read_csv(data_file, header = None) for data_file in data_files)
     df = pd.concat(dfs, ignore_index=True)
     return df
@@ -57,7 +55,7 @@ def split_train_test(df):
     y = df.iloc[:, -1]
 
     # Dividimos en training y test (80% y 20%)
-    x_train, x_test, y_train, y_test = train_test_split(x,y, test_size = 0.2, shuffle=True)
+    x_train, x_test, y_train, y_test = train_test_split(x,y, test_size = 0.2, shuffle=True, random_state = 123456789)
     return x_train, x_test, y_train, y_test
 
 # Exploracion de los datos
@@ -271,9 +269,7 @@ def cross_validation_random_forest(df_train_X, df_train_Y):
     kf = KFold(n_splits=folds, shuffle = True)
 
     # Modelo que vamos a considerar
-    # max_features = sqrt porque se dice que usemos los valores por defecto que vienen en las
-    # transparencias de teoria
-    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, max_features = "sqrt", n_jobs = n_jobs)
+    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, n_jobs = n_jobs)
 
     # Espacio de busqueda
     parameters = {
@@ -317,9 +313,14 @@ def cross_validation_mlp(df_train_X, df_train_Y):
 
 def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     """TODO -- documentar este codigo"""
+    # Modelo Dummy para usarlo como baseline
+    dummy = DummyRegressor(strategy="mean")
+    dummy.fit(df_train_x, df_train_y)
+
     # Realizamos las predicciones con el modelo
     train_predictions = model.predict(df_train_x)
     test_predictions = model.predict(df_test_x)
+    dummy_predictions = model.predict(df_test_x)
 
     train_r2 = r2_score(df_train_y, train_predictions)
     train_mse = mean_squared_error(df_train_y, train_predictions)
@@ -328,6 +329,10 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     test_r2 = r2_score(df_test_y, test_predictions)
     test_mse = mean_squared_error(df_test_y, test_predictions)
     test_mae = mean_absolute_error(df_test_y, test_predictions)
+
+    dummy_r2 = r2_score(df_dummy_y, dummy_predictions)
+    dummy_mse = mean_squared_error(df_dummy_y, dummy_predictions)
+    dummy_mae = mean_absolute_error(df_dummy_y, dummy_predictions)
 
     # Mostramos los resultados
     print("--> Resultados en training set:")
@@ -339,6 +344,11 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     print(f"\t--> MSE: {test_mse}")
     print(f"\t--> MAE: {test_mae}")
     print(f"\t--> R2: {test_r2}")
+    print("")
+    print("--> Resultados en dummying set:")
+    print(f"\t--> MSE: {dummy_mse}")
+    print(f"\t--> MAE: {dummy_mae}")
+    print(f"\t--> R2: {dummy_r2}")
     print("")
 
 def learning_curve(model, df_train_x, df_train_y, df_test_x, df_test_y, number_of_splits = 10):
@@ -441,8 +451,9 @@ if __name__ == "__main__":
     #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
 
     print("==> Entrenando sobre todo el conjunto de datos")
-    n_estimators = 3
-    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, max_features = "sqrt", n_estimators = n_estimators, n_jobs = n_jobs)
+    n_estimators = 95
+    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, n_estimators = n_estimators, n_jobs = n_jobs)
+
     print(f"--> Elegimos como modelo Random Forest con n_estimators = {n_estimators}")
     print(f"--> Como conjunto de datos elegimos el conjunto al que no aplicamos PCA ni pol_features")
     print(f"--> Entrenando sobre todo el conjunto de datos")
@@ -452,5 +463,5 @@ if __name__ == "__main__":
     show_results(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
 
     print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
-    learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 20)
+    learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
 
