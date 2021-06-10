@@ -213,23 +213,29 @@ def show_cross_validation(df_train_x, df_train_y, df_train_x_original):
 
     print("--> CV -- PCA + Polinimio orden 2")
     # Cross validation para modelos lineales
-    cross_validation_linear(df_train_x, df_train_y)
+    # TODO -- descomentar
+    #  cross_validation_linear(df_train_x, df_train_y)
 
     # Cross validation para SVM
-    cross_validation_mlp(df_train_x, df_train_y)
+    # TODO -- descomentar
+    #  cross_validation_mlp(df_train_x, df_train_y)
 
     # Cross validation para random forest
+    # TODO -- descomentar
     cross_validation_random_forest(df_train_x, df_train_y)
 
     print("--> CV -- No PCA")
     # Cross validation para modelos lineales
-    cross_validation_linear(df_train_x_original, df_train_y)
+    # TODO -- descomentar
+    #  cross_validation_linear(df_train_x_original, df_train_y)
 
     # Cross validation para SVM
-    cross_validation_mlp(df_train_x_original, df_train_y)
+    # TODO -- descomentar
+    #  cross_validation_mlp(df_train_x_original, df_train_y)
 
     # Cross validation para random forest
-    cross_validation_random_forest(df_train_x_original, df_train_y)
+    # TODO -- descomentar
+    #  cross_validation_random_forest(df_train_x_original, df_train_y)
 
     wait_for_user_input()
 
@@ -363,10 +369,10 @@ if __name__ == "__main__":
     df_train_original_x = df_train_x.copy()
     df_test_original_x = df_test_x.copy()
 
-    df_train_x, df_test_x = apply_PCA(df_train_x, df_test_x, explained_variation = 0.99)
+    df_train_x, df_test_x = apply_PCA(df_train_x, df_test_x, explained_variation = 0.90)
 
     print("==> Aplicando polinomio grado 2 al conjunto PCA")
-    poly = PolynomialFeatures(2)
+    poly = PolynomialFeatures(3)
     df_train_x = poly.fit_transform(df_train_x)
     df_test_x = poly.transform(df_test_x)
 
