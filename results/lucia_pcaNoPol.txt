@@ -1,0 +1,75 @@
+[54 rows x 9 columns]
+==> Borrando outliers
+/home/luciasalamanca/anaconda3/lib/python3.8/site-packages/sklearn/covariance/_robust_covariance.py:647: UserWarning: The covariance matrix associated to your dataset is not full rank
+  warnings.warn("The covariance matrix associated to your dataset "
+Tamaño tras la limpieza de outliers del train_set: 31197
+Shapes de X e Y: (31197, 53), (31197,)
+Numero de filas eliminadas: 1642
+Porcentaje de filas eliminadas: 5.000152257985931%
+==> Estandarizando el dataset
+==> Aplicando PCA
+Ajustando los datos de entrenamiento a la transformacion
+Ajuste realizado:
+	Porcentaje de la varianza explicado: [0.36572135 0.04396426 0.04024351 0.03983162 0.03807559 0.03742947
+ 0.0328059  0.02605652 0.02503619 0.02425605 0.02397805 0.02164596
+ 0.02108977 0.02071851 0.0202135  0.02006357 0.01982559 0.01957728
+ 0.01890433 0.01723848 0.01697129 0.01676429 0.01634049 0.01433439
+ 0.01248459 0.00763479 0.00751526 0.00694255 0.00652505 0.00508726
+ 0.00341686]
+	Porcentaje de la varianza explicado total: 0.9906922920022432
+	Numero de dimensiones obtenidas: 31
+==> Lanzando cross validation
+--> CV -- PCA
+Fitting 5 folds for each of 4 candidates, totalling 20 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 8 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  12 out of  20 | elapsed:    1.7s remaining:    1.1s
+[Parallel(n_jobs=-1)]: Done  20 out of  20 | elapsed:    1.8s finished
+Resultados para Lasso
+================================================================================
+
+	--> Param: {'alpha': 0.1}, mean_score: -483.2582685769118, std_score: 258.8455531159118
+	--> Param: {'alpha': 1}, mean_score: -490.31407692818686, std_score: 270.06300383299094
+	--> Param: {'alpha': 1.0}, mean_score: -490.31407692818686, std_score: 270.06300383299094
+	--> Param: {'alpha': 2.0}, mean_score: -501.25165408870635, std_score: 278.81014560396846
+
+Fitting 5 folds for each of 4 candidates, totalling 20 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 8 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  12 out of  20 | elapsed:    0.2s remaining:    0.1s
+[Parallel(n_jobs=-1)]: Done  20 out of  20 | elapsed:    0.2s finished
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 8 concurrent workers.
+Resultados para Ridge
+================================================================================
+
+	--> Param: {'alpha': 0.1}, mean_score: -25494.55423796096, std_score: 50185.535440318
+	--> Param: {'alpha': 1}, mean_score: -1608.539837133691, std_score: 2413.878562892838
+	--> Param: {'alpha': 1.0}, mean_score: -1608.539837133691, std_score: 2413.878562892838
+	--> Param: {'alpha': 2.0}, mean_score: -801.7153933831271, std_score: 801.0164408548293
+
+Fitting 5 folds for each of 9 candidates, totalling 45 fits
+[Parallel(n_jobs=-1)]: Done  16 tasks      | elapsed:  1.3min
+[Parallel(n_jobs=-1)]: Done  45 out of  45 | elapsed:  2.9min finished
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 8 concurrent workers.
+Resultados para MLP
+================================================================================
+
+	--> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (50,)}, mean_score: -362.6496581051578, std_score: 147.4394476780635
+	--> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (75,)}, mean_score: -358.255237318657, std_score: 138.07338380155963
+	--> Param: {'activation': 'relu', 'alpha': 0.001, 'hidden_layer_sizes': (100,)}, mean_score: -360.5434886901106, std_score: 137.44736589027156
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (50,)}, mean_score: -361.0571290796565, std_score: 150.05372512451424
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (75,)}, mean_score: -376.9509371590968, std_score: 141.82650929444443
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (100,)}, mean_score: -356.56815812139746, std_score: 140.15756799049657
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (50,)}, mean_score: -360.4259821368249, std_score: 136.53005481925695
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (75,)}, mean_score: -372.5644125578109, std_score: 159.06844579755804
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (100,)}, mean_score: -349.5588109909938, std_score: 134.8506763043015
+
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+[Parallel(n_jobs=-1)]: Done   6 out of  15 | elapsed:  2.9min remaining:  4.4min
+[Parallel(n_jobs=-1)]: Done  12 out of  15 | elapsed:  5.2min remaining:  1.3min
+Resultados para Random Forest
+================================================================================
+
+	--> Param: {'n_estimators': 50}, mean_score: -446.04824854995303, std_score: 98.91928348494875
+	--> Param: {'n_estimators': 75}, mean_score: -440.8698597040587, std_score: 100.20771630034443
+	--> Param: {'n_estimators': 100}, mean_score: -445.17069011336645, std_score: 100.64003900465428
+
+[Parallel(n_jobs=-1)]: Done  15 out of  15 | elapsed:  5.4min finished
