@@ -74,3 +74,6 @@ Resultados para Random Forest
 	--> Param: {'n_estimators': 50}, mean_score: -296.0560648822887, std_score: 43.519336788476686
 	--> Param: {'n_estimators': 75}, mean_score: -285.71034811407105, std_score: 36.044800637258575
 	--> Param: {'n_estimators': 100}, mean_score: -280.9575216263441, std_score: 35.46779460138012
+	--> Param: {'n_estimators': 150}, mean_score: -283.9057569309148, std_score: 178.1098589280261
+	--> Param: {'n_estimators': 200}, mean_score: -284.0305611842203, std_score: 175.86702205191798
+	--> Param: {'n_estimators': 250}, mean_score: -284.43458325853624, std_score: 174.05400183691694
