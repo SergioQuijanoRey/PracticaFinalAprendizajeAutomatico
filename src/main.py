@@ -273,14 +273,17 @@ def cross_validation_random_forest(df_train_X, df_train_Y):
     kf = KFold(n_splits=folds, shuffle = True)
 
     # Modelo que vamos a considerar
-    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, n_jobs = n_jobs)
+    # max_features = sqrt porque se dice que usemos los valores por defecto que vienen en las
+    # transparencias de teoria
+    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, max_features = "sqrt", n_jobs = n_jobs)
 
     # Espacio de busqueda
     parameters = {
         # Numero de arboles (he puesto esto por poner)
         # TODO -- en el codigo final poner los parametros que hemos explorado en una sola lista
         #  'n_estimators': np.array([50,75,100]),
-        'n_estimators': np.array([150, 200, 250]),
+        #  'n_estimators': np.array([150, 200, 250]),
+        'n_estimators': np.array([80, 85, 90, 95])
 
         # TODO -- EXPERIMENTAL -- probar con esto porque creo que hay que fijarlo
         #'max_depth': [None, 60, 100]
