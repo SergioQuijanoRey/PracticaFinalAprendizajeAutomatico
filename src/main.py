@@ -218,7 +218,7 @@ def show_cross_validation(df_train_x, df_train_y, df_train_x_original):
 
     # Cross validation para SVM
     # TODO -- descomentar
-    #  cross_validation_mlp(df_train_x, df_train_y)
+    cross_validation_mlp(df_train_x, df_train_y)
 
     # Cross validation para random forest
     # TODO -- descomentar
