@@ -320,7 +320,7 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     # Realizamos las predicciones con el modelo
     train_predictions = model.predict(df_train_x)
     test_predictions = model.predict(df_test_x)
-    dummy_predictions = model.predict(df_test_x)
+    dummy_predictions = dummy.predict(df_test_x)
 
     train_r2 = r2_score(df_train_y, train_predictions)
     train_mse = mean_squared_error(df_train_y, train_predictions)
@@ -330,9 +330,9 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     test_mse = mean_squared_error(df_test_y, test_predictions)
     test_mae = mean_absolute_error(df_test_y, test_predictions)
 
-    dummy_r2 = r2_score(df_dummy_y, dummy_predictions)
-    dummy_mse = mean_squared_error(df_dummy_y, dummy_predictions)
-    dummy_mae = mean_absolute_error(df_dummy_y, dummy_predictions)
+    dummy_r2 = r2_score(df_test_y, dummy_predictions)
+    dummy_mse = mean_squared_error(df_test_y, dummy_predictions)
+    dummy_mae = mean_absolute_error(df_test_y, dummy_predictions)
 
     # Mostramos los resultados
     print("--> Resultados en training set:")
@@ -345,7 +345,7 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     print(f"\t--> MAE: {test_mae}")
     print(f"\t--> R2: {test_r2}")
     print("")
-    print("--> Resultados en dummying set:")
+    print("--> Resultados en dummy set:")
     print(f"\t--> MSE: {dummy_mse}")
     print(f"\t--> MAE: {dummy_mae}")
     print(f"\t--> R2: {dummy_r2}")
