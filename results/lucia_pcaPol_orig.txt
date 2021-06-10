@@ -81,10 +81,10 @@ Resultados para Random Forest
 
 	--> Param: {'n_estimators': 50}, mean_score: -296.0560648822887, std_score: 43.519336788476686
 	--> Param: {'n_estimators': 75}, mean_score: -285.71034811407105, std_score: 36.044800637258575
-	--> Param: {'n_estimators': 80}, mean_score: -308.76332941607643, std_score: 123.64159012103657
-	--> Param: {'n_estimators': 85}, mean_score: -308.55444345651415, std_score: 123.60420196039425
-	--> Param: {'n_estimators': 90}, mean_score: -312.56894789638875, std_score: 119.23605843188962
-	--> Param: {'n_estimators': 95}, mean_score: -314.059140945007, std_score: 123.16442287845635
+	--> Param: {'n_estimators': 80}, mean_score: -288.542025860994, std_score: 175.40135316671748
+	--> Param: {'n_estimators': 85}, mean_score: -281.561262002936, std_score: 172.0746938214093
+	--> Param: {'n_estimators': 90}, mean_score: -288.75724010070815, std_score: 174.21924636210787
+	--> Param: {'n_estimators': 95}, mean_score: -280.5589034994265, std_score: 175.9336859916399
 	--> Param: {'n_estimators': 100}, mean_score: -280.9575216263441, std_score: 35.46779460138012
 	--> Param: {'n_estimators': 150}, mean_score: -283.9057569309148, std_score: 178.1098589280261
 	--> Param: {'n_estimators': 200}, mean_score: -284.0305611842203, std_score: 175.86702205191798
