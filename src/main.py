@@ -41,12 +41,12 @@ def load_data():
     """
     data_files = [
         # TODO -- descomentar esto para cuando no estemos usando google drive
-        #  "./datos/Training/Features_Variant_1.csv",
-        #  "./datos/Testing/TestSet/Test_Case_1.csv",
+        "./datos/Training/Features_Variant_1.csv",
+        "./datos/Testing/TestSet/Test_Case_1.csv",
 
         # TODO -- version google drive
-        "/content/drive/MyDrive/ml/datos/Training/Features_Variant_1.csv",
-        "/content/drive/MyDrive/ml/datos/Testing/TestSet/Test_Case_1.csv",
+        #  "/content/drive/MyDrive/ml/datos/Training/Features_Variant_1.csv",
+        #  "/content/drive/MyDrive/ml/datos/Testing/TestSet/Test_Case_1.csv",
     ]
 
     dfs = (pd.read_csv(data_file, header = None) for data_file in data_files)
@@ -230,7 +230,7 @@ def show_cross_validation(df_train_x, df_train_y, df_train_x_original):
     # TODO -- descomentar
     cross_validation_linear(df_train_x_original, df_train_y)
 
-    # Cross validation para SVM
+    # Cross validation para MLP
     # TODO -- descomentar
     cross_validation_mlp(df_train_x_original, df_train_y)
 
@@ -258,13 +258,13 @@ def cross_validation_linear(df_train_X, df_train_Y):
     }
 
     # CV para Lasso
-    gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
+    gs = GridSearchCV(lasso, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs, return_train_score = True)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title = "Lasso")
 
     # CV para Ridge
-    gs = GridSearchCV(ridge, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
+    gs = GridSearchCV(ridge, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs, return_train_score = True)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title = "Ridge")
@@ -285,7 +285,7 @@ def cross_validation_random_forest(df_train_X, df_train_Y):
         'min_samples_leaf': np.array([2, 3])
     }
 
-    gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
+    gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs, return_train_score = True)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title="Random Forest")
@@ -313,7 +313,7 @@ def cross_validation_mlp(df_train_X, df_train_Y):
         'hidden_layer_sizes': layer_sizes
     }
 
-    gs = GridSearchCV(mlp, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
+    gs = GridSearchCV(mlp, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs, return_train_score = True)
     gs.fit(df_train_X, df_train_Y)
     results = gs.cv_results_
     human_readable_results(results, title="MLP")
@@ -454,7 +454,7 @@ if __name__ == "__main__":
 
     print("==> Lanzando cross validation")
     # TODO -- descomentar
-    #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
+    show_cross_validation(df_train_x, df_train_y, df_train_original_x)
 
     print("==> Entrenando sobre todo el conjunto de datos")
     model = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", max_depth = 10, min_samples_leaf = 2, n_estimators = 90, n_jobs = n_jobs)
