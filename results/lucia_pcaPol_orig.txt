@@ -10,6 +10,14 @@ Resultados para Lasso
 	--> Param: {'alpha': 1.0}, mean_score: -438.1992705047148, std_score: 233.74774127379862
 	--> Param: {'alpha': 2.0}, mean_score: -462.224589936069, std_score: 235.69765814381586
 
+# kfolds = 10
+
+	--> Param: {'alpha': 0.1}, mean_score: -1107.1756605310431, std_score: 866.2429671780565
+	--> Param: {'alpha': 1}, mean_score: -887.6170782852936, std_score: 207.58827544292933
+	--> Param: {'alpha': 1.0}, mean_score: -887.6170782852936, std_score: 207.58827544292933
+	--> Param: {'alpha': 2.0}, mean_score: -932.1550477436225, std_score: 208.74027085670224
+
+
 Resultados para Ridge
 ================================================================================
 
@@ -17,6 +25,14 @@ Resultados para Ridge
 	--> Param: {'alpha': 1}, mean_score: -48987.51937109696, std_score: 95427.87780524314
 	--> Param: {'alpha': 1.0}, mean_score: -48987.51937109696, std_score: 95427.87780524314
 	--> Param: {'alpha': 2.0}, mean_score: -22378.935838535876, std_score: 42034.678954169925
+
+# kfolds = 10
+
+	--> Param: {'alpha': 0.1}, mean_score: -77974.13562031637, std_score: 138282.89928053503
+	--> Param: {'alpha': 1}, mean_score: -22213.63756552488, std_score: 39745.622295899455
+	--> Param: {'alpha': 1.0}, mean_score: -22213.63756552488, std_score: 39745.622295899455
+	--> Param: {'alpha': 2.0}, mean_score: -17087.804269755485, std_score: 31087.968081941817
+
 
 Resultados para MLP
 ================================================================================
@@ -57,6 +73,14 @@ Resultados para Lasso
 	--> Param: {'alpha': 1.0}, mean_score: -480.11993947953704, std_score: 35.482757681283594
 	--> Param: {'alpha': 2.0}, mean_score: -489.19237063597245, std_score: 39.415944879429375
 
+kfolds = 10
+
+	--> Param: {'alpha': 0.1}, mean_score: -913.7139070777579, std_score: 237.23907736802926
+	--> Param: {'alpha': 1}, mean_score: -905.2553280241206, std_score: 249.58213739492732
+	--> Param: {'alpha': 1.0}, mean_score: -905.2553280241206, std_score: 249.58213739492732
+	--> Param: {'alpha': 2.0}, mean_score: -913.0022682158615, std_score: 254.9630351458722
+
+
 Resultados para Ridge
 ================================================================================
 
@@ -64,6 +88,14 @@ Resultados para Ridge
 	--> Param: {'alpha': 1}, mean_score: -478.36503468920756, std_score: 136.63780420915543
 	--> Param: {'alpha': 1.0}, mean_score: -478.36503468920756, std_score: 136.63780420915543
 	--> Param: {'alpha': 2.0}, mean_score: -478.40594085233863, std_score: 136.68068618061668
+
+
+kfolds = 10
+
+	--> Param: {'alpha': 0.1}, mean_score: -919.0394446775296, std_score: 274.37161432191147
+	--> Param: {'alpha': 1}, mean_score: -918.7814807764826, std_score: 274.40255819566244
+	--> Param: {'alpha': 1.0}, mean_score: -918.7814807764826, std_score: 274.40255819566244
+	--> Param: {'alpha': 2.0}, mean_score: -918.615407902698, std_score: 274.4117187297759
 
 Resultados para MLP
 ================================================================================
@@ -91,3 +123,15 @@ Resultados para Random Forest
 	--> Param: {'n_estimators': 150}, mean_score: -283.9057569309148, std_score: 178.1098589280261
 	--> Param: {'n_estimators': 200}, mean_score: -284.0305611842203, std_score: 175.86702205191798
 	--> Param: {'n_estimators': 250}, mean_score: -284.43458325853624, std_score: 174.05400183691694
+
+kfolds = 10
+
+	--> Param: {'n_estimators': 50}, mean_score: -470.8671811417592, std_score: 162.8409333462377
+	--> Param: {'n_estimators': 75}, mean_score: -472.5302382671991, std_score: 160.39347469338134
+	--> Param: {'n_estimators': 80}, mean_score: -461.2523149774388, std_score: 162.38504115064012
+	--> Param: {'n_estimators': 85}, mean_score: -467.3104111507743, std_score: 168.2333241014332
+	--> Param: {'n_estimators': 90}, mean_score: -476.0081629950372, std_score: 158.0642983283646
+	--> Param: {'n_estimators': 95}, mean_score: -461.37871936427666, std_score: 157.72736993064728
+	--> Param: {'n_estimators': 100}, mean_score: -467.2158120757661, std_score: 165.85968479627064
+	--> Param: {'n_estimators': 150}, mean_score: -469.23251364586383, std_score: 170.16389936152794
+	--> Param: {'n_estimators': 200}, mean_score: -465.91866408808653, std_score: 166.8988019020769
