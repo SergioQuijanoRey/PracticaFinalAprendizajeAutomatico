@@ -1,0 +1,52 @@
+Fri Jun 11 17:45:02 UTC 2021
+=================================
+Resultados para Lasso
+================================================================================
+
+	--> Param: {'alpha': 0.1}, mean_score: -433.9353207667382, std_score: 129.83807297493027, test_times_train = 1.0058633172476665
+	--> Param: {'alpha': 1}, mean_score: -438.05115545644514, std_score: 132.3947296218748, test_times_train = 1.0036356061295888
+	--> Param: {'alpha': 1.0}, mean_score: -438.05115545644514, std_score: 132.3947296218748, test_times_train = 1.0036356061295888
+	--> Param: {'alpha': 2.0}, mean_score: -447.14181990592004, std_score: 135.17481467965587, test_times_train = 1.0034581834434844
+
+Resultados para Ridge
+================================================================================
+
+	--> Param: {'alpha': 0.1}, mean_score: -432.3288205827415, std_score: 122.47308821380383, test_times_train = 1.0087500769609385
+	--> Param: {'alpha': 1}, mean_score: -432.3150250856364, std_score: 122.33230714350833, test_times_train = 1.0085875346542976
+	--> Param: {'alpha': 1.0}, mean_score: -432.3150250856364, std_score: 122.33230714350833, test_times_train = 1.0085875346542976
+	--> Param: {'alpha': 2.0}, mean_score: -432.33969515765193, std_score: 122.25624997042257, test_times_train = 1.0084797463574464
+
+Resultados para MLP
+================================================================================
+
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (50,)}, mean_score: -322.54667105001784, std_score: 187.6059846454776, test_times_train = 1.1856193943836353
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (75,)}, mean_score: -343.09494190598963, std_score: 189.45894322768484, test_times_train = 1.1353364281921783
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (100,)}, mean_score: -319.29488575095087, std_score: 180.74370331571563, test_times_train = 1.2400849191425674
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (50,)}, mean_score: -324.6868598371099, std_score: 184.4711907988862, test_times_train = 1.1928936355664692
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (75,)}, mean_score: -311.6367132689794, std_score: 183.71099750520705, test_times_train = 1.2383116492788178
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (100,)}, mean_score: -317.45861584686224, std_score: 172.82989873378153, test_times_train = 1.2182029614929244
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (50,)}, mean_score: -322.00395737506426, std_score: 192.3484484045867, test_times_train = 1.1624958276560697
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (75,)}, mean_score: -319.501073628126, std_score: 173.89848314693876, test_times_train = 1.199444677537885
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (100,)}, mean_score: -316.9833502718989, std_score: 179.74957203628279, test_times_train = 1.2252932313224345
+
+Fitting 10 folds for each of 16 candidates, totalling 160 fits
+Resultados para Random Forest
+================================================================================
+
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 90}, mean_score: -334.82502370048763, std_score: 156.12983167349174, test_times_train = 1.2292474939921711
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 95}, mean_score: -333.6296684544979, std_score: 157.35932202519913, test_times_train = 1.2291669302025214
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 100}, mean_score: -333.2663564682278, std_score: 159.5339835820124, test_times_train = 1.212668376928581
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 120}, mean_score: -335.0879358176958, std_score: 159.9413580515378, test_times_train = 1.226924103518434
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 90}, mean_score: -333.2580834894664, std_score: 159.3723083202307, test_times_train = 1.1949110493019617
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 95}, mean_score: -335.25704951157553, std_score: 154.10518468763496, test_times_train = 1.2020198926819416
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 100}, mean_score: -335.21177318857497, std_score: 159.34993329114968, test_times_train = 1.1952338226945174
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 120}, mean_score: -331.61765061654125, std_score: 158.71877304358554, test_times_train = 1.185622226032401
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 90}, mean_score: -272.49609151978905, std_score: 136.42525418813665, test_times_train = 2.06838915367853
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 95}, mean_score: -274.65196276677597, std_score: 139.6909737884366, test_times_train = 2.0663686317490275
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 100}, mean_score: -274.8599604359799, std_score: 137.31798656949618, test_times_train = 2.0741872737416482
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 120}, mean_score: -277.0803985325746, std_score: 140.19222291470518, test_times_train = 2.1157404310922363
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 90}, mean_score: -275.1888302817727, std_score: 145.02135618149816, test_times_train = 1.7230120555704145
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 95}, mean_score: -276.3645253346378, std_score: 142.40872702285688, test_times_train = 1.731585653657413
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 100}, mean_score: -275.55231100801274, std_score: 141.3546103419108, test_times_train = 1.7300403493606409
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 120}, mean_score: -275.3088955951201, std_score: 140.72997823276626, test_times_train = 1.7323986797736366
+

@@ -144,22 +144,148 @@ $$f: \mathbb{X} \rightarrow \mathbb{Y}$$
 
 donde $\mathbb{X}$ es el conjunto de las 53 variables aleatorias de entrada, e $\mathbb{Y}$ es la variable aleatoria de salida, entera.
 
+Por lo tanto, nuestro objetivo es encontrar tanto una clase de funciones $\mathcal{H}$ como un algorito de aprendizaje $\mathcal{A}$ que nos devuelva un $h \in \mathcal{H}$ que se asemeje a la función objetivo, es decir
+
+$$h(x) \approx f(x), \forall x \in \mathbb{X}$$
+
+La noción de que ambas funciones sean aproximadas se especificará en \emph{\ref{eleccion_modelos}. \nameref{eleccion_modelos}}.
+
 \subsection{Descripción de las características}
 
-% Describir las características según el paper
-%   - Como se extraen por encima
-%   - Qué representan
-Como se ha explicado previamente el estudio se centra en  las páginas de la red social Facebook. Para que entendamos más de dicho problema, necesitamos conocer 
+Para obtener las características el autor del paper \cite{original_paper:paper} ha empleado un \emph{crawler} programado en \lstinline{JAVA} y el lenguaje de consulta de \emph{Facebook} (\lstinline{FQL}), con el que se ha recogido información de las páginas de \lstinline{Facebook} de más interés \cite{original_paper:paper}. A partir de dicha informacióm, solo se consideran los comentarios que fueron publicados en los últimos tres días respecto al momento en el que el \emph{crawler} recolecta los datos. Esto pues se presupone que los posts más antiguos no van a recibir más atención. También se eliminan los posts de los que faltan comentarios o algún detalle necesario, de ahí que en nuestro dataset no tengamos \emph{missing values}, como se mostrará en \emph{\ref{exploracion_datos}. \nameref{exploracion_datos}}.
 
+Como se ha dicho previamente tenemmos 53 características que podemos dividirlas en distintos subgrupos.
 
-\subsection{Exploración del \emph{Dataset}}
+\subsubsection{Características de la página}
 
-% Poner las tablas
-% Decir que es necesario estandarizar
+Las extracción de características gira entorno a una de las características principales de \emph{Facebook}, las páginas de \emph{Facebook}. Por tanto, se extraerán características referentes a distintas páginas de \emph{Facebook} con la intención de predecir el número de comentarios que obtendrá un nuevo \emph{post} en dichas páginas.
+
+Existen cuatro características referentes a las páginas: 
+
+\begin{itemize}
+  \item \textbf{Likes de la página}: describe el apoyo de los usuarios hacia ciertos elementos de dicha página, como comentarios, imágenes, estados, posts\ldots
+
+% TODO -- Esto mejorar 
+  \item \textbf{Categoría de la página}: define el tipo de entidad o persona sobre la que trata la información tratada en dicha página. El dataset contiene un archivo donde se definen todos los tipos posibles de categorías, como por ejemplo: comercio local, marca comercial, producto, artista, entretenimiento, \ldots
+
+  \item \textbf{\emph{Checkin} de la página}: comprobaciones de actos de presencia en un determinado lugar (sólo es válido para páginas institucionales)
+
+  \item \textbf{\emph{Talking About} de la página}: número de usuarios que vuelven a la página tras darle a like a dicha página. Por volver a la página se entienden actividades como comentar, dar like a un post, compartir un post\ldots
+\end{itemize}
+
+\subsubsection{Características esenciales}
+ 
+En este subgrupo se incluye el comportamiento de los comentarios en el post en distintos intervalos de tiempo respecto a distintas métricas. Se dividen en cinco secciones que dependen de una referencia temporal fijada. El autor fija esta referencia en 72h después de la publicación del \emph{post}.
+
+\begin{itemize}
+  \item \textbf{C1}: número total de comentarios durante las 72 horas previas a la referencia
+
+  \item \textbf{C2}: número total de comentarios durante las  24 horas previas a la referencia 
+
+  \item \textbf{C3}: número total de comentarios entre las 48 y 24 horas previas a la referencia
+
+  \item \textbf{C4}: número total de comentarios en las 24h posteriores a publicar la referencia
+
+  \item \textbf{C5}: diferencia de número total de comentarios entre C2 y C3.
+
+\end{itemize}
+
+A partir de estas características base, calculamos las siguientes estadísticas respecto a los post de una misma página:  mínimo, máximo, media, mediana y desviación típica. Con ello se obtienen 25 características adicionales, que, junto con las cinco características base, conforman 30 características de este subgrupo. 
+
+\subsubsection{Características relativas al día de la semana}
+
+Para representar el día de la semana en el que el post fue publicado y el día con respecto a la referencia temporal se usan indicadores binarios. Existen 14 categorías de este tipo.
+
+Se usan 14 características binarias. 7 de ellas para indicar el día de la semana en la que se publicó el post (todas cero salvo el día de publicación). Las otras 7 características indican el día de la semana de la referencia fijada (de nuevo, 72h después de la publicación del post).
+
+\subsubsection{Otras características básicas}
+
+Incluye 5 características tipo medatadatos del post, como puede ser la longitud del post o el número de veces que se ha compartido. 
+
+\subsection{Exploración del \emph{Dataset}} \label{exploracion_datos}
+
+Con la función \lstinline{explore_dataset}, mostramos algunas estadísticas de las variables aleatorias que componen las columnas de nuestro conjunto de datos. Notar que en esta exploración ya hemos separado el conjunto de \emph{training} y \emph{testing}, con la función \lstinline{split_train_test} que más adelante, en \emph{\ref{preprocesado}. \nameref{preprocesado}}. 
+
+La descripción de las variables se muestra en la siguiente tabla:
+
+\begin{table}[H]
+  \centering
+  \resizebox{0.8\columnwidth}{!}{%
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{col}  &         \textbf{mean}&         \textbf{median}&           \textbf{std}&     \textbf{min}&           \textbf{max}&           \textbf{p25}&           \textbf{p75} \\
+    \hline
+    0    & 1.32e+6&  292911.00&  7.401e+6&    36.0&  4.86e+8&  37149.00&  1.20e+6 \\
+    1    & 4.63e+3&       0.00&  2.045e+4&     0.0&  1.86e+5&      0.00&  9.90e+1 \\
+    2    & 4.54e+4&    7237.00&  1.237e+5&     0.0&  6.78e+6&    698.00&  5.14e+4 \\
+    3    & 2.42e+1&      18.00&  2.001e+1&     1.0&  1.06e+2&      9.00&  3.20e+1 \\
+    4    & 1.46e+0&       0.00&  1.872e+1&     0.0&  2.34e+3&      0.00&  0.00e+0 \\
+    5    & 4.42e+2&     235.00&  4.958e+2&     0.0&  2.77e+3&     45.00&  7.17e+2 \\
+    6    & 5.53e+1&      23.37&  8.565e+1&     0.0&  2.34e+3&      5.51&  7.18e+1 \\
+    7    & 3.53e+1&      12.00&  6.842e+1&     0.0&  2.34e+3&      2.00&  4.20e+1 \\
+    8    & 6.72e+1&      35.06&  8.117e+1&     0.0&  1.00e+3&      7.88&  1.02e+2 \\
+    9    & 1.62e-1&       0.00&  3.337e+0&     0.0&  3.81e+2&      0.00&  0.00e+0 \\
+    10   & 2.84e+2&     118.00&  3.758e+2&     0.0&  2.77e+3&     26.00&  4.01e+2 \\
+    11   & 2.21e+1&       8.43&  3.599e+1&     0.0&  9.99e+2&      1.91&  2.90e+1 \\
+    12   & 7.42e+0&       2.00&  1.980e+1&     0.0&  7.97e+2&      0.00&  8.00e+0 \\
+    13   & 4.04e+1&      17.38&  5.450e+1&     0.0&  8.70e+2&      4.10&  6.07e+1 \\
+    14   & 2.90e-2&       0.00&  2.209e+0&     0.0&  3.24e+2&      0.00&  0.00e+0 \\
+    15   & 2.67e+2&     116.00&  3.257e+2&     0.0&  1.87e+3&     26.00&  3.81e+2 \\
+    16   & 1.95e+1&       8.58&  3.062e+1&     0.0&  4.37e+2&      2.03&  2.48e+1 \\
+    17   & 4.87e+0&       1.00&  1.311e+1&     0.0&  4.33e+2&      0.00&  5.00e+0 \\
+    18   & 3.85e+1&      18.63&  5.041e+1&     0.0&  5.80e+2&      4.09&  5.38e+1 \\
+    19   & 1.38e+0&       0.00&  1.642e+1&     0.0&  1.89e+3&      0.00&  0.00e+0 \\
+    20   & 4.14e+2&     224.00&  4.719e+2&     0.0&  2.77e+3&     41.00&  6.70e+2 \\
+    21   & 5.23e+1&      21.85&  8.017e+1&     0.0&  1.89e+3&      5.21&  6.83e+1 \\
+    22   & 3.37e+1&      12.00&  6.459e+1&     0.0&  1.89e+3&      2.00&  4.00e+1 \\
+    23   & 6.29e+1&      32.36&  7.611e+1&     0.0&  8.52e+2&      7.60&  9.62e+1 \\
+    24   &-2.19e+2&     -92.00&  2.801e+2& -1677.0&  3.81e+2&   -310.00& -2.10e+1 \\
+    25   & 2.75e+2&     109.00&  3.730e+2&  -204.0&  2.77e+3&     23.00&  3.79e+2 \\
+    26   & 2.58e+0&       0.27&  1.563e+1&  -210.5&  6.39e+2&     -0.48&  2.97e+0 \\
+    27   &-1.99e+0&       0.00&  1.237e+1&  -288.0&  7.97e+2&     -2.00&  0.00e+0 \\
+    28   & 5.56e+1&      25.54&  7.372e+1&     0.0&  1.33e+3&      5.99&  8.12e+1 \\
+    29   & 5.50e+1&      11.00&  1.345e+2&     0.0&  2.34e+3&      2.00&  4.60e+1 \\
+    30   & 2.20e+1&       2.00&  7.666e+1&     0.0&  2.09e+3&      0.00&  1.20e+1 \\
+    31   & 1.94e+1&       0.00&  6.916e+1&     0.0&  1.59e+3&      0.00&  9.00e+0 \\
+    32   & 5.20e+1&      10.00&  1.258e+2&     0.0&  2.18e+3&      2.00&  4.40e+1 \\
+    33   & 2.64e+0&       0.00&  9.292e+1& -1277.0&  2.09e+3&     -6.00&  3.00e+0 \\
+    34   & 3.51e+1&      35.00&  2.099e+1&     0.0&  7.20e+1&     17.00&  5.30e+1 \\
+    35   & 1.64e+2&      97.00&  3.826e+2&     0.0&  2.14e+4&     38.00&  1.72e+2 \\
+    36   & 1.17e+2&      13.00&  1.023e+3&     1.0&  1.44e+5&      2.00&  6.00e+1 \\
+    37   & 0.00e+0&       0.00&  0.000e+0&     0.0&  0.00e+0&      0.00&  0.00e+0 \\
+    38   & 2.37e+1&      24.00&  2.008e+0&     1.0&  2.40e+1&     24.00&  2.40e+1 \\
+    39   & 1.22e-1&       0.00&  3.273e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    40   & 1.43e-1&       0.00&  3.506e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    41   & 1.49e-1&       0.00&  3.566e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    42   & 1.56e-1&       0.00&  3.622e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    43   & 1.45e-1&       0.00&  3.525e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    44   & 1.45e-1&       0.00&  3.523e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    45   & 1.37e-1&       0.00&  3.443e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    46   & 1.43e-1&       0.00&  3.502e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    47   & 1.31e-1&       0.00&  3.382e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    48   & 1.37e-1&       0.00&  3.443e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    49   & 1.50e-1&       0.00&  3.572e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    50   & 1.49e-1&       0.00&  3.564e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    51   & 1.44e-1&       0.00&  3.518e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    52   & 1.44e-1&       0.00&  3.514e-1&     0.0&  1.00e+0&      0.00&  0.00e+0 \\
+    53   & 7.43e+0&       0.00&  3.588e+1&     0.0&  1.30e+3&      0.00&  3.00e+0 \\
+    \hline
+  \end{tabular}
+}
+\caption{Exploración estadística de los atributos del conjunto de entrenamiento}
+\end{table}
+
+En la tabla no hemos mostrado la estadística de \emph{missing values}, pues como ya hemos comentado, no tenemos datos faltantes en este \emph{dataset}. Tampoco mostramos la columna en la que se muestra el tipo, pues todas las variables son o bien flotantes o bien enteras, y por tanto no es necesaria una técnica de codificación de variables categóricas como puede ser \emph{one hot encoding}.
+
+En esta tabla queda clara la necesitada de realizar un proceso de estandarización o bien de normalización. Los modelos que vamos a emplear son muy sensibles a variables en escalas diferentes. Otros directamente se comportam mucho mejor cuando tenemos media cero y desviación típica uno. Estas escalas diferentes se pueden ver, por ejemplo, con la columna 0 que se mueve en el rango $[36.0, 4.86 * 10^8]$, mientras que la columna 43 se mueve en el rango $[0, 1]$
 
 \pagebreak
 
-\section{Preprocesamiento de los datos}
+\section{Preprocesamiento de los datos} \label{preprocesado}
+
+\pagebreak
+
+\section{Selección del modelo} \label{eleccion_modelos}
 
 \pagebreak
 
