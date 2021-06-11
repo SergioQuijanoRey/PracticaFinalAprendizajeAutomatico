@@ -453,21 +453,12 @@ if __name__ == "__main__":
     df_train_x, df_test_x = standarize_dataset(df_train_x, df_test_x)
 
     print("==> Lanzando cross validation")
-    show_cross_validation(df_train_x, df_train_y, df_train_original_x)
+    # TODO -- descomentar
+    #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
 
     print("==> Entrenando sobre todo el conjunto de datos")
-    n_estimators = 95
-
-    # Disminuir max, aumentar min
-    # TODO -- estamos probando mal
-    max_depth = 10  # TODO -- antes era None
-    min_samples_leaf = 3    # TODO -- antes era valor por defecto
-    ccp_alpha = 2.00        # TODO -- antes esto no lo estabamos considerando
-    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = max_depth, min_samples_leaf = min_samples_leaf, ccp_alpha = ccp_alpha, max_features = "sqrt", n_estimators = n_estimators, n_jobs = n_jobs)
-
-    print(f"--> Elegimos como modelo Random Forest con n_estimators = {n_estimators}")
-    print(f"--> Como conjunto de datos elegimos el conjunto al que no aplicamos PCA ni pol_features")
-    print(f"--> Entrenando sobre todo el conjunto de datos")
+    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", max_depth = 10, min_samples_leaf = 2, n_estimators = 90, n_jobs = n_jobs)
+    print(f"--> Entrenando sobre todo el conjunto de datos con el modelo final")
     model.fit(df_train_original_x, df_train_y)
 
     print(f"--> Modelo entrenado, mostrando resultados")
