@@ -29,7 +29,7 @@ from core import *
 # Parametros globlales
 #===============================================================================
 n_jobs = -1 # Poner a None si peta demasiado
-folds = 5   # Para controlar los tiempos de cross validation
+folds = 10  # Para controlar los tiempos de cross validation
 
 # Carga de los datos
 #===============================================================================
@@ -40,8 +40,13 @@ def load_data():
         https://stackoverflow.com/questions/20906474/import-multiple-csv-files-into-pandas-and-concatenate-into-one-dataframe
     """
     data_files = [
-        "./datos/Training/Features_Variant_1.csv",
-        "./datos/Testing/TestSet/Test_Case_1.csv",
+        # TODO -- descomentar esto para cuando no estemos usando google drive
+        #  "./datos/Training/Features_Variant_1.csv",
+        #  "./datos/Testing/TestSet/Test_Case_1.csv",
+
+        # TODO -- version google drive
+        "/content/drive/MyDrive/ml/datos/Training/Features_Variant_1.csv",
+        "/content/drive/MyDrive/ml/datos/Testing/TestSet/Test_Case_1.csv",
     ]
 
     dfs = (pd.read_csv(data_file, header = None) for data_file in data_files)
@@ -214,24 +219,24 @@ def show_cross_validation(df_train_x, df_train_y, df_train_x_original):
 
     # Cross validation para SVM
     # TODO -- descomentar
-    cross_validation_mlp(df_train_x, df_train_y)
+    #  cross_validation_mlp(df_train_x, df_train_y)
 
     # Cross validation para random forest
     # TODO -- descomentar
-    cross_validation_random_forest(df_train_x, df_train_y)
+    #  cross_validation_random_forest(df_train_x, df_train_y)
 
     print("--> CV -- No PCA")
     # Cross validation para modelos lineales
     # TODO -- descomentar
-    #  cross_validation_linear(df_train_x_original, df_train_y)
+    cross_validation_linear(df_train_x_original, df_train_y)
 
     # Cross validation para SVM
     # TODO -- descomentar
-    #  cross_validation_mlp(df_train_x_original, df_train_y)
+    cross_validation_mlp(df_train_x_original, df_train_y)
 
     # Cross validation para random forest
     # TODO -- descomentar
-    #  cross_validation_random_forest(df_train_x_original, df_train_y)
+    cross_validation_random_forest(df_train_x_original, df_train_y)
 
     wait_for_user_input()
 
@@ -269,12 +274,15 @@ def cross_validation_random_forest(df_train_X, df_train_Y):
     kf = KFold(n_splits=folds, shuffle = True)
 
     # Modelo que vamos a considerar
-    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, n_jobs = n_jobs)
+    randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", n_jobs = n_jobs)
 
     # Espacio de busqueda
     parameters = {
         # Numero de arboles
-        'n_estimators': np.array([50, 75, 80, 85, 90, 95, 100, 150, 200])
+        # TODO -- probar a poner ccp alpha a ver si cambia algo
+        'n_estimators': np.array([90, 95, 100, 120]),
+        'max_depth': np.array([5, 10]),
+        'min_samples_leaf': np.array([2, 3])
     }
 
     gs = GridSearchCV(randomForest, parameters, scoring = "neg_mean_squared_error", cv = kf, refit = False, verbose = 3, n_jobs = n_jobs)
@@ -300,8 +308,7 @@ def cross_validation_mlp(df_train_X, df_train_Y):
     # Espacio de busqueda
     # TODO -- MEMORIA -- tanh es usada principalmente para problemas de clasificacion
     parameters = {
-        'alpha': [10**x for x in [-3, -2, -1]],
-        # TODO -- probar con tanh???
+        'alpha': [10**x for x in [-2, -1, 0]],
         'activation': ['relu'],
         'hidden_layer_sizes': layer_sizes
     }
@@ -413,8 +420,7 @@ if __name__ == "__main__":
     prev_len = len(df_train_x)
 
     # TODO -- no se deberia llamar df_train porque ahora no usamos pd.df
-    # TODO -- descomentar
-    #  df_train_x, df_train_y = remove_outliers(df_train_x, df_train_y)
+    df_train_x, df_train_y = remove_outliers(df_train_x, df_train_y)
 
     print(f"Tamaño tras la limpieza de outliers del train_set: {len(df_train_x)}")
     print(f"Shapes de X e Y: {df_train_x.shape}, {df_train_y.shape}")
@@ -447,12 +453,17 @@ if __name__ == "__main__":
     df_train_x, df_test_x = standarize_dataset(df_train_x, df_test_x)
 
     print("==> Lanzando cross validation")
-    # TODO -- descomentar
-    #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
+    show_cross_validation(df_train_x, df_train_y, df_train_original_x)
 
     print("==> Entrenando sobre todo el conjunto de datos")
     n_estimators = 95
-    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = None, n_estimators = n_estimators, n_jobs = n_jobs)
+
+    # Disminuir max, aumentar min
+    # TODO -- estamos probando mal
+    max_depth = 10  # TODO -- antes era None
+    min_samples_leaf = 3    # TODO -- antes era valor por defecto
+    ccp_alpha = 2.00        # TODO -- antes esto no lo estabamos considerando
+    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_depth = max_depth, min_samples_leaf = min_samples_leaf, ccp_alpha = ccp_alpha, max_features = "sqrt", n_estimators = n_estimators, n_jobs = n_jobs)
 
     print(f"--> Elegimos como modelo Random Forest con n_estimators = {n_estimators}")
     print(f"--> Como conjunto de datos elegimos el conjunto al que no aplicamos PCA ni pol_features")
