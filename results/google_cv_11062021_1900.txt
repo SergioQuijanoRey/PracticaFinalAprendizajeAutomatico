@@ -1,0 +1,51 @@
+Fri Jun 11 15:54:37 UTC 2021
+=================================
+--> CV -- No PCA
+Resultados para Lasso
+================================================================================
+
+	--> Param: {'alpha': 0.1}, mean_score: -433.9353207667382, std_score: 129.83807297493027
+	--> Param: {'alpha': 1}, mean_score: -438.05115545644514, std_score: 132.3947296218748
+	--> Param: {'alpha': 1.0}, mean_score: -438.05115545644514, std_score: 132.3947296218748
+	--> Param: {'alpha': 2.0}, mean_score: -447.14181990592004, std_score: 135.17481467965587
+
+Resultados para Ridge
+================================================================================
+
+	--> Param: {'alpha': 0.1}, mean_score: -432.3288205827415, std_score: 122.47308821380383
+	--> Param: {'alpha': 1}, mean_score: -432.3150250856364, std_score: 122.33230714350833
+	--> Param: {'alpha': 1.0}, mean_score: -432.3150250856364, std_score: 122.33230714350833
+	--> Param: {'alpha': 2.0}, mean_score: -432.33969515765193, std_score: 122.25624997042257
+
+Resultados para MLP
+================================================================================
+
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (50,)}, mean_score: -323.81623762651407, std_score: 201.35530747691269
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (75,)}, mean_score: -319.831453812357, std_score: 173.27356340857943
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (100,)}, mean_score: -319.07773951701586, std_score: 175.99366086488467
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (50,)}, mean_score: -325.27530679832967, std_score: 176.11516165996346
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (75,)}, mean_score: -324.8783851208219, std_score: 169.2800237933351
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (100,)}, mean_score: -323.01930657949885, std_score: 191.74522351031655
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (50,)}, mean_score: -323.842913832407, std_score: 180.41473389110496
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (75,)}, mean_score: -317.44006558043793, std_score: 183.94422529607394
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (100,)}, mean_score: -316.1927231259846, std_score: 181.75670119366478
+
+Resultados para Random Forest
+================================================================================
+
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 90}, mean_score: -332.2687358751499, std_score: 155.68722833796772
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 95}, mean_score: -335.48103197485034, std_score: 158.1039388201773
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 100}, mean_score: -336.01291503210155, std_score: 159.47681354759473
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 120}, mean_score: -332.48767211781546, std_score: 158.83355202806197
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 90}, mean_score: -334.0015069172585, std_score: 157.50955582253326
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 95}, mean_score: -331.92022970290157, std_score: 157.71093483162332
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 100}, mean_score: -330.6209282193902, std_score: 160.39323472802155
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 120}, mean_score: -333.8463231912216, std_score: 158.25993635857608
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 90}, mean_score: -273.66760202126136, std_score: 139.67854721230245  <-
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 95}, mean_score: -274.06787318599606, std_score: 138.53379009935867
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 100}, mean_score: -277.8989825464252, std_score: 139.9748404267404
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 120}, mean_score: -275.36059133511526, std_score: 139.87331634215806
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 90}, mean_score: -275.87301884065903, std_score: 142.1918747823083
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 95}, mean_score: -276.18670641826304, std_score: 142.63175010306358
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 100}, mean_score: -276.44482734274163, std_score: 140.24008226628658
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 120}, mean_score: -279.2881741240991, std_score: 142.70946701914966
