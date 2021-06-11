@@ -34,7 +34,11 @@
 * [x] Adaptar Cross Validation + PCA a polinomios
 * [ ] Entrenar sobre todo el conjunto de datos
 * [ ] Escribir memoria 😥
+
+# Dudas Mesejo
+
 * [ ] Preguntar a Mesejo lo de las learning curves
+* [ ] Se puede usar el out of bag error en RForest para acelerar el Cross Validation?
 
 # Modelos candidatos
 
