@@ -45,6 +45,7 @@
 
 % Para que los metadatos que escribe latex esten en español
 \usepackage[spanish]{babel}
+\decimalpoint % Para que no se cambie el punto a la coma
 
 % Para la bibliografia
 % Sin esto, los enlaces de la bibliografia dan un error de compilacion
@@ -208,6 +209,8 @@ Incluye 5 características tipo medatadatos del post, como puede ser la longitud
 \subsection{Exploración del \emph{Dataset}} \label{exploracion_datos}
 
 Con la función \lstinline{explore_dataset}, mostramos algunas estadísticas de las variables aleatorias que componen las columnas de nuestro conjunto de datos. Notar que en esta exploración ya hemos separado el conjunto de \emph{training} y \emph{testing}, con la función \lstinline{split_train_test} que más adelante, en \emph{\ref{preprocesado}. \nameref{preprocesado}}.
+
+Tras esta separación nos quedamos con 32839 ejemplos para entrenamiento y 8210 ejemplos para test.
 
 La descripción de las variables se muestra en la siguiente tabla:
 
@@ -401,13 +404,13 @@ Vamos a observar en la siguiente tabla el número de componentes que obtenemos c
 
 Tenemos un total de 31 componentes que explican el 0.9906 de la varianza. Obtenemos así que la dimensionalidad de nuestro espacio muestral se reduce un $40\%$ aproximadamente.
 
-Tras aplicar \emph{PCA}, las variables vuelven a estar en rangos dispares. Sin embargo, esperamos a aplicar las trasnformaciones no lineales de los datos para volver a realizar la estandarización. 
+Tras aplicar \emph{PCA}, las variables vuelven a estar en rangos dispares. Sin embargo, esperamos a aplicar las trasnformaciones no lineales de los datos para volver a realizar la estandarización.
 
 \subsection{Transformación polinómica}
 
 % TODO -- hablar de d_vc
 
-Al haber reducido la dimensionalidad de nuestro espacio, el tamaño de nuestro \emph{dataset} permite realizar una transformación cuadrática de nuestros datos sin que el coste computacional sea excesivo, y sin que tengamos problemas de generalización. 
+Al haber reducido la dimensionalidad de nuestro espacio, el tamaño de nuestro \emph{dataset} permite realizar una transformación cuadrática de nuestros datos sin que el coste computacional sea excesivo, y sin que tengamos problemas de generalización.
 
 Hemos considerado esta transformación pues no disponemos de conocimiento experto del problema para decidir en base a ello una tal transformación. Tampoco en el \emph{paper} original \cite{original_paper:paper} se presenta una transformación en base a conocimiento experto.
 
@@ -416,7 +419,7 @@ Por tanto, consideramos una transformación polinómica $\phi_q$ de grado $q$ fi
 % TODO - la frase de los monomios es que la dices mejor y me he enterado regular
 La transformación consiste en considerar los monomios en varias variables de hasta grado 2. Por ejemplo, $x_1 x_2, x_1, x_1^2, \ldots$
 
-La dimensión de nuestro espacio transformado es entonces 
+La dimensión de nuestro espacio transformado es entonces
 
 $$d = {1+2n}+{{n(n-1)}\over{2}} = {1+2*31}+{{31*30}\over{2}} = 528$$
 
@@ -428,9 +431,271 @@ Ahora, tenemos varianzas y rangos de las variables dispares. Esto es claro porqu
 
 \section{Selección del modelo} \label{seleccion_modelos}
 
+Vamos a emplear la técnica \emph{k-fold Cross Validation} para elegir la mejor hipótesis entre distintas clases de funciones. Además, usaremos esta técnica para decidir si usamos el conjunto original de los datos a los que solo aplicamos estandarización, o si bien usamos el conjunto al que aplicamos \emph{PCA} y polinomios de grado dos.
+
+En todos los modelos que consideramos, consideramos como métrica de evaluación el error cuadrático medio. En regresión hemos visto pocas alternativas, algunas como el error absoluto medio o el coeficiente R2. Sin embargo, consideramos el error cuadrático medio pues todos los modelos considerados usan esta métrica como métrica de error a minimizar, y es una métrica fácilmente interpretable.
+
+\subsection{Modelos Candidatos}
+
+\subsubsection{Regresión lineal} \label{regresion_lineal}
+
+Para los modelos lineales vamos a considerar el ajuste de un hiperplano usando dos tipos de regularización: Ridge y Lasso.
+
+El interés de estos modelos lineales es que suponen usar modelos de baja complejidad, que probablemente no tengan apenas problemas de generalización, y que a pesar de su sencillez funcionan bien en muchos casos.
+
+Podríamos haber fijado un tipo de regularización en base al problema con el que estamos tratando. Sin embargo, como estamos comparando dos conjuntos de datos distintos, probamos con los dos regularizadores. En el modelo al que aplicamos \emph{PCA} y las transformaciones polinómicas nos decantamos por emplear \emph{Lasso}, pues fuerza a que algunas componentes sean cero, y esto es interesante para anular términos de la transformación polinómica que no sean interesantes. En el conjunto de datos original, tenemos 52 características para un total de 32839 ejemplos de entrenamiento. Usando la regla práctica vista en teoría $N >> d_{VC} * 10$, y teniendo en cuenta que en el caso de 52 variables y que estamos considerando modelos lineales, se verifica con mucho márgen que $32839 >> 10 * 53$. Es por esto que probamos con Ridge, no tenemos la necesidad a priori de ignorar algunas características.
+
+Para Ridge usamos el clasificador \lstinline{Ridge} y para Lasso el clasificador \lstinline{Lasso}, ambos de la librería \lstinline{sklearn}. Los parámetros prefijados son:
+
+\begin{itemize}
+  \item \textbf{Máximo de iteraciones}: 10.000
+  \item \textbf{Tolerancia}: $10^{-4}$
+  \item \textbf{Resolutor para Ridge}: Cholesky
+\end{itemize}
+
+Estamos fijando \emph{Cholesky} como resolutor para \emph{Ridge}. De la documentación oficial de \lstinline{sklearn} \cite{sk_linear:online}, sabemoss que  esste resolutor usa una solución cerrada usando el despeje matricial proporcionado por \lstinline{scipy.linalg.solve}. Para \emph{Lasso}, se usa \emph{Coordinate Descent} como algoritmo de aprendizaje. En este algoritmo, en cada paso, se escoge una coordenada según una política dada, y se minimiza variando esa coordenada, dejando el resto fijas \cite{coordinate_descent:online}.
+
+Los parámetros que probamos con \emph{Cross Validation} son:
+
+\begin{itemize}
+  \item \textbf{Alpha} (constante de regularización): $\alpha \in \{0.1, 1, 2\}$
+\end{itemize}
+
+\subsubsection{\emph{MLP} con tres capas} \label{mlp}
+
+Consideramos \emph{MLP} por su gran expresividad y potencia. Debemos tener cuidado porque estos modelos tienen mucha facilidad de caer en el sobreajuste. Por ese motivo, fijamos algunas medidas de regularización para evitar que esto pase.
+
+Hacemos uso del clasificador \lstinline{MLPRegressor} de \emph{sklearn}. Los parámetros prefijados son:
+
+\begin{itemize}
+  \item \textbf{Resolutor}: Adam
+  \item \textbf{Tasa de aprendizaje}: 0.001
+  \item \textbf{Tolerancia}: $10^-4$
+  \item Usamos \textbf{\emph{Early Stopping}} como medida de regularización
+  \item \textbf{Función de activación}: ReLU $f(x) := \max{0,x}$
+\end{itemize}
+
+No consideramos la función de activación $tanh$ porque esta es más adecuada para problemas de clasificación. Usamos la función \emph{Rectified Linear Activation Unit} en vez de la función sigmoide porque son menos fáciles de saturar en el entrenamiento, implican cómputos más sencillos y no sufren del problema del desvanecimiento del gradiente \cite{relu:online}.
+
+Además, usamos como algoritmo de aprendizaje \emph{Adam}. Es una extensión del algoritmo \emph{SGD}.
+
+En \emph{SGD} mantenemos un \emph{learning rate} fijo durante todo el entrenamiento. En \emph{Adam} se usa el primer y segundo momento del gradiente para variar el \emph{learning rate}, usando una media exponencial sobre estos dos elementos en la que se pueden fijar los parámetros para controlar el decaimiento \cite{adam:online}.
+
+Como ventajas que nos llevan a emplear este algoritmo, podemos citar que es computacionalmente eficiente, apropiado para problemas con muchos datos o altas dimensionalidades, poco afectado por gradientes dispersos o con mucho rudio. Su eficacia ha sido probada en distintos casos de uso reales.
+
+Los parámetros que probamos con \emph{Cross Validation} son:
+
+\begin{itemize}
+  \item \textbf{Número de neuronas por capa}: 50, 75 y 100
+  \item \textbf{Alpha} (constante de regularización): $\alpha \in \{0.01, 0.1, 1\}$
+  \item \textbf{Tipo de regularización}: Ridge
+\end{itemize}
+
+Por tanto, estamos usando regularización \emph{Ridge} y \emph{early stopping} como dos medidas de regularización, porque como ya hemos comentado, estos modelos tienen mucha facilidad de sobreajustarse a los datos de entrenamiento.
+
+\subsubsection{Random Forest} \label{random_forest}
+
+Hacemos uso del clasificador \lstinline{RandomForestRegressor} de \emph{sklearn}. De nuevo, este modelo tiene mucha capacidad de sobreajuste, y por tanto, será necesario establecer medidas de regularización para evitar que esto pase.
+
+Este modelo, gracias al empleo de \emph{Bagging} y que se usan árboles no correlados, es muy robusto y eficiente.
+
+Los parámetros prefijados son:
+
+\begin{itemize}
+  \item \textbf{Criterio de evaluación}: MSE
+  \item Usamos \textbf{bootstraping}.
+  \item \textbf{Máximo de características}: fijamos el número de características usadas para la elección del mejor split a la raíz cuadrada del número total de características.
+\end{itemize}
+
+Los parámetros que probamos con \emph{Cross Validation} son:
+
+\begin{itemize}
+  \item \textbf{Número de árboles}: 90, 95, 100 y 120
+  \item \textbf{Profundidad máxima del árbol}: 50 y 100
+  \item Número mínimo de muestras necesarias por cada \textbf{nodo hoja}: 2 y 3
+\end{itemize}
+
+Usamos la profundidad máxima del árbol y el número mínimo de ejemplos en las hojas como medida de regularización. A menor profundidad mayor intensidad de regularización. Y a mayor número mínimo de ejemplos en las hojas mayor intensidad de regularización. Con estas dos medidas buscamos evitar que el modelo fácilmente sobreajuste los datos.
+
+Como el algoritmo de aprendizaje se usa el algoritmo \emph{greedy} que se ha explicado en las transparencias de teoría aplicado a cada uno de los $n$ árboles.
+
+\subsection{Resultados de \emph{Cross Validation}} \label{cross_validation}
+
+El código que lanza \emph{Cross validation} se encuentra en la función \lstinline{show_cross_validation}.
+
+Esta función hace uso de \emph{GridSearchCV} de \emph{sklearn}. Mediante el uso del parámetro \lstinline{scoring} indicamos que queremos usar el error cuadrático medio negado como error de validación, lo que implica que los resultados serán negativos y tendremos que elegir el mayor de ellos.
+
+Esta función está comentada en el código, pues supone un tiempo demasiado largo de cómputo. En nuestra máquina tarda aproximadamente 4 horas \footnote{Ver en \emph{\ref{apendice}. \nameref{apendice}} las características de la máquina que se ha usado para la ejecución}, mientras que en \emph{Google Colab}, usando el plan gratuito, tarda una hora y media aproximadamente.
+
+Los resultados obtenidos se muestran en las siguientes tablas:
+
+\subsubsection{Resultados sobre el conjunto de datos sin aplicar PCA}
+
+% TODO -- Sin PCA
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+    \textbf{Regularizador} & \textbf{Alpha} & \textbf{Media MSE} & \textbf{STD MSE} \\
+    \hline
+    Lasso & 0.1 &  -433.93 & 129.83 \\
+    Lasso & 1.0 &  -438.05 & 132.39 \\
+    Lasso & 2.0 &  -447.14 & 135.17 \\
+    Ridge & 0.1 & -432.32  & 122.47  \\
+    \textbf{Ridge} & \textbf{1.0}    & \textbf{-432.31}& \textbf{122.33}  \\
+    Ridge & 2.0  & -432.33 & 122.25  \\
+    \hline
+  \end{tabular}
+  \caption{Resultados de \emph{Cross Validation} en el \textbf{modelo lineal}}
+\end{table}
+
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+
+\textbf{Alpha} & \textbf{Nº Neuronas Capas Ocultas} & \textbf{Media MSE} & \textbf{STD MSE} \\
+\hline
+0.01 & 50   & -323.81  & 201.35  \\
+0.01 & 75   & -319.83  & 173.27  \\
+0.01 & 100  & -319.07  & 175.99  \\
+0.1  & 50   & -325.27  & 176.11  \\
+0.1  & 75   & -324.87  & 169.28  \\
+0.1  & 100  & -323.01  & 191.74  \\
+1    & 50   & -323.84  & 180.41  \\
+1    & 75   & -317.44  & 183.94  \\
+\textbf{1}    & \textbf{100}  & \textbf{-316.19}  & \textbf{181.75}  \\
+\hline
+  \end{tabular}
+  \caption{Resultados de \emph{Cross Validation} en \textbf{MLP}}
+\end{table}
+% ======================
+\begin{table}[H]
+  \centering
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{|c|c|c|c|c|}
+  \hline
+  \textbf{Profundidad} & \textbf{Mínimo de ejemplos en los nodos} & \textbf{Nº Estimadores} & \textbf{Media MSE} & \textbf{STD MSE} \\
+\hline
+5   & 2 & 90    & -332.26 & 155.68 \\
+5   & 2 & 95    & -335.48 & 158.10 \\
+5   & 2 & 100   & -336.01 & 159.47 \\
+5   & 2 & 120   & -332.48 & 158.83 \\
+5   & 3 & 90    & -334.00 & 157.50 \\
+5   & 3 & 95    & -331.92 & 157.71 \\
+5   & 3 & 100   & -330.62 & 160.39 \\
+5   & 3 & 120   & -333.84 & 158.25 \\
+\textbf{10}  & \textbf{2} & \textbf{90}    & \textbf{-273.66} & \textbf{139.67} \\
+10  & 2 & 95    & -274.06 & 138.53 \\
+10  & 2 & 100   & -277.89 & 139.97 \\
+10  & 2 & 120   & -275.36 & 139.87 \\
+10  & 3 & 90    & -275.87 & 142.19 \\
+10  & 3 & 95    & -276.18 & 142.63 \\
+10  & 3 & 100   & -276.44 & 140.24 \\
+10  & 3 & 120   & -279.28 & 142.70 \\
+\hline
+  \end{tabular}}
+  \caption{Resultados de \emph{Cross Validation} en \textbf{RandomForest}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \resizebox{\columnwidth}{!}{
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+  \textbf{Modelo} & \textbf{Parametros} & \textbf{Media MSE} & \textbf{STD MSE} \\
+  \hline
+  Ridge  & $\alpha$ = 1  & -432.31 & 122.33  \\
+  MLP    & $\alpha$ = 1, nº neur = 100 & -316.19  & 181.75 \\
+  \textbf{RandomForest} & profundidad = \textbf{10}, min ejemplos = \textbf{2} nº estimadores = \textbf{90} & \textbf{-273.66} & \textbf{139.67} \\
+\hline
+  \end{tabular}}
+  \caption{Mejores resultados}
+\end{table}
+
+A vista de estos resultados, vemos que en el conjunto de entrenamiento sin aplicar \emph{PCA}, el mejor algoritmo ha sido \emph{Random Forest} con sus mejores parámetros. Sin embargo, los mejores parámetros para \emph{Ridge} logran un modelo más estable que \emph{Random Forest}, como muestra la desviación típica del \emph{MSE} entre los 10 \emph{folds} empleados.
+
+Además, se confirma nuestra hipótesis de que, en este \emph{dataset} con pocas columnas, iba a funcionar mejor el regularizador \emph{Ridge}.
+
+\subsubsection{Resultados sobre el conjunto de datos al que hemos aplicado \emph{PCA} y transformaciones polinómicas}
+
+% TODO -- falta poner las tablas
+
 \pagebreak
 
-\
+\section{Selección del modelo final}
+
+\subsection{Entrenamiento sobre todo el conjunto de entrenamiento}
+
+Tras haber aplicado \emph{Cross Validation}, obtenemos que el modelo óptimo es \emph{Random Forest} con parámetros:
+
+\begin{itemize}
+  \item Profundidad: 10
+  \item Número mínimo de ejemplos en las hojas: 2
+  \item Número de árboles estimadores: 90
+  \item Conjunto de datos: \emph{training set} original al que solo aplicamos borrado de \emph{outliers} y  estandarización
+\end{itemize}
+
+\subsection{Resultados obtenidos}
+
+Una vez entrenado sobre todo el conjunto de entrenamiento, mostramos los resultados con las funciones \lstinline{show_results} y \lstinline{learning_curve}. Los resultados de la primera función se resumen en la siguiente tabla:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    Conjunto de datos  & MSE & MAE & R2 \\
+    \hline
+    Training & 131.28  & 2.68 & 0.77 \\
+    Testing  & 541.50  & 4.81 & 0.55 \\
+    Dummy    & 1226.51 & 9.41 & 0.00 \\
+    \hline
+    \end{tabular}
+    \caption{Resultados tras el entrenamiento sobre todo el conjunto de datos}
+\end{table}
+
+La fila \emph{Dummy} se refiere a un regresor que siempre devuelve la media (con la clase de \lstinline{sklearn} \lstlisting{DummyRegressor(strategy="mean")}), evaluado sobre el conjunto de test.
+
+La curva de aprendizaje obtenida es la siguiente:
+
+\subsection{Análisis de los resultados obtenidos}
+
+\pagebreak
+\section{Apéndice} \label{apendice}
+
+\subsection{Características de la máquina}
+
+\begin{lstlisting}
+  Architecture:                    x86_64
+  CPU op-mode(s):                  32-bit, 64-bit
+  Byte Order:                      Little Endian
+  Address sizes:                   39 bits physical, 48 bits virtual
+  CPU(s):                          4
+  On-line CPU(s) list:             0-3
+  Thread(s) per core:              2
+  Core(s) per socket:              2
+  Socket(s):                       1
+  NUMA node(s):                    1
+  Vendor ID:                       GenuineIntel
+  CPU family:                      6
+  Model:                           142
+  Model name:                      Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz
+  Stepping:                        9
+  CPU MHz:                         2432.428
+  CPU max MHz:                     3500,0000
+  CPU min MHz:                     400,0000
+  BogoMIPS:                        5802.42
+  Virtualization:                  VT-x
+  L1d cache:                       64 KiB
+  L1i cache:                       64 KiB
+  L2 cache:                        512 KiB
+  L3 cache:                        4 MiB
+  \end{lstlisting}
+
+Además, la máquina tiene 8GB de memoria RAM.
+
+\pagebreak
 % Bibliografia
 \bibliography{./References}
 \bibliographystyle{ieeetr}
