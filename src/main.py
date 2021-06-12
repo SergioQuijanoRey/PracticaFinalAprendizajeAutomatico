@@ -41,12 +41,12 @@ def load_data():
     """
     data_files = [
         # TODO -- descomentar esto para cuando no estemos usando google drive
-        "./datos/Training/Features_Variant_1.csv",
-        "./datos/Testing/TestSet/Test_Case_1.csv",
+        #  "./datos/Training/Features_Variant_1.csv",
+        #  "./datos/Testing/TestSet/Test_Case_1.csv",
 
         # TODO -- version google drive
-        #  "/content/drive/MyDrive/ml/datos/Training/Features_Variant_1.csv",
-        #  "/content/drive/MyDrive/ml/datos/Testing/TestSet/Test_Case_1.csv",
+        "/content/drive/MyDrive/ml/datos/Training/Features_Variant_1.csv",
+        "/content/drive/MyDrive/ml/datos/Testing/TestSet/Test_Case_1.csv",
     ]
 
     dfs = (pd.read_csv(data_file, header = None) for data_file in data_files)
@@ -217,28 +217,28 @@ def show_cross_validation(df_train_x, df_train_y, df_train_x_original):
     print("--> CV -- PCA + Polinimio orden 2")
     # Cross validation para modelos lineales
     # TODO -- descomentar
-    #  cross_validation_linear(df_train_x, df_train_y)
+    cross_validation_linear(df_train_x, df_train_y)
 
     # Cross validation para SVM
     # TODO -- descomentar
-    #  cross_validation_mlp(df_train_x, df_train_y)
+    cross_validation_mlp(df_train_x, df_train_y)
 
     # Cross validation para random forest
     # TODO -- descomentar
-    #  cross_validation_random_forest(df_train_x, df_train_y)
+    cross_validation_random_forest(df_train_x, df_train_y)
 
     print("--> CV -- No PCA")
     # Cross validation para modelos lineales
     # TODO -- descomentar
-    cross_validation_linear(df_train_x_original, df_train_y)
+    #  cross_validation_linear(df_train_x_original, df_train_y)
 
     # Cross validation para MLP
     # TODO -- descomentar
-    cross_validation_mlp(df_train_x_original, df_train_y)
+    #  cross_validation_mlp(df_train_x_original, df_train_y)
 
     # Cross validation para random forest
     # TODO -- descomentar
-    cross_validation_random_forest(df_train_x_original, df_train_y)
+    #  cross_validation_random_forest(df_train_x_original, df_train_y)
 
     wait_for_user_input()
 
@@ -252,7 +252,7 @@ def cross_validation_linear(df_train_X, df_train_Y):
 
     # Los dos modelos lineales que vamos a considerar
     lasso = Lasso(max_iter = max_iters, tol = tol)
-    ridge = Ridge(max_iter = max_iters, tol = tol)
+    ridge = Ridge(max_iter = max_iters, tol = tol, solver = "cholesky")
 
     # Espacio de busqueda
     parameters = {
@@ -276,6 +276,7 @@ def cross_validation_random_forest(df_train_X, df_train_Y):
     kf = KFold(n_splits=folds, shuffle = True)
 
     # Modelo que vamos a considerar
+    # n_jobs para indicar que queremos usar mas de un procesador en el entrenamiento
     randomForest = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", n_jobs = n_jobs)
 
     # Espacio de busqueda
