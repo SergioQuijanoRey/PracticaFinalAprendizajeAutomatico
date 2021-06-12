@@ -68,10 +68,12 @@ def split_train_test(df):
 def explore_training_set(df):
     """
     Muestra caracteristicas relevantes del dataset de entrenamiento
+
     Parameters:
     ===========
     df: dataframe del que queremos realizar la exploracion
         No debe contener datos de test, pues no queremos visualizarlos
+
     Returns:
     ========
     stats: dataframe con las estadisticas calculadas
@@ -434,7 +436,8 @@ if __name__ == "__main__":
     # Porque estandarizando tambien se normalizan los rangos en cierta medida y eso
     # hay que justificarlo
     # TODO -- descomentar cuando hagamos la memoria
-    #explore_training_set(df_train_x)
+    print("--> Estadisticas tras la estandarizacion")
+    explore_training_set(pd.DataFrame(df_train_x))
 
     print("==> Aplicando PCA")
 

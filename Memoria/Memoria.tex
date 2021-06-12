@@ -39,7 +39,9 @@
 }
 
 % Para que no se salgan las lineas de codigo
-\lstset{breaklines=true}
+% Para fijar una fuente que resalte
+\lstset{breaklines=true, basicstyle=\ttfamily}
+
 
 % Para que los metadatos que escribe latex esten en español
 \usepackage[spanish]{babel}
@@ -132,7 +134,7 @@
 
 \section{Identificación del problema}
 
-El problema que hemos escogido para esta práctica final consiste en predecir el número de comentarios que un post en \emph{Facebook} va a recibir horas después de ser publicado. La fuente original de los datos se encuentra en \cite{uci:online}. 
+El problema que hemos escogido para esta práctica final consiste en predecir el número de comentarios que un post en \emph{Facebook} va a recibir horas después de ser publicado. La fuente original de los datos se encuentra en \cite{uci:online}.
 
 En dicha página, se encuentra también la referencia al \emph{paper} original \cite{original_paper:paper}. En dicho paper se comenta el proceso de extracción de los datos, que generan los \emph{datasets} con los que hemos trabajado.
 
@@ -160,12 +162,12 @@ Como se ha dicho previamente tenemmos 53 características que podemos dividirlas
 
 Las extracción de características gira entorno a una de las características principales de \emph{Facebook}, las páginas de \emph{Facebook}. Por tanto, se extraerán características referentes a distintas páginas de \emph{Facebook} con la intención de predecir el número de comentarios que obtendrá un nuevo \emph{post} en dichas páginas.
 
-Existen cuatro características referentes a las páginas: 
+Existen cuatro características referentes a las páginas:
 
 \begin{itemize}
   \item \textbf{Likes de la página}: describe el apoyo de los usuarios hacia ciertos elementos de dicha página, como comentarios, imágenes, estados, posts\ldots
 
-% TODO -- Esto mejorar 
+% TODO -- Esto mejorar
   \item \textbf{Categoría de la página}: define el tipo de entidad o persona sobre la que trata la información tratada en dicha página. El dataset contiene un archivo donde se definen todos los tipos posibles de categorías, como por ejemplo: comercio local, marca comercial, producto, artista, entretenimiento, \ldots
 
   \item \textbf{\emph{Checkin} de la página}: comprobaciones de actos de presencia en un determinado lugar (sólo es válido para páginas institucionales)
@@ -174,13 +176,14 @@ Existen cuatro características referentes a las páginas:
 \end{itemize}
 
 \subsubsection{Características esenciales}
- 
+
 En este subgrupo se incluye el comportamiento de los comentarios en el post en distintos intervalos de tiempo respecto a distintas métricas. Se dividen en cinco secciones que dependen de una referencia temporal fijada. El autor fija esta referencia en 72h después de la publicación del \emph{post}.
 
+% TODO -- si da tiempo, hacerlo en una tabla que queda mas profesional
 \begin{itemize}
   \item \textbf{C1}: número total de comentarios durante las 72 horas previas a la referencia
 
-  \item \textbf{C2}: número total de comentarios durante las  24 horas previas a la referencia 
+  \item \textbf{C2}: número total de comentarios durante las  24 horas previas a la referencia
 
   \item \textbf{C3}: número total de comentarios entre las 48 y 24 horas previas a la referencia
 
@@ -190,7 +193,7 @@ En este subgrupo se incluye el comportamiento de los comentarios en el post en d
 
 \end{itemize}
 
-A partir de estas características base, calculamos las siguientes estadísticas respecto a los post de una misma página:  mínimo, máximo, media, mediana y desviación típica. Con ello se obtienen 25 características adicionales, que, junto con las cinco características base, conforman 30 características de este subgrupo. 
+A partir de estas características base, calculamos las siguientes estadísticas respecto a los post de una misma página:  mínimo, máximo, media, mediana y desviación típica. Con ello se obtienen 25 características adicionales, que, junto con las cinco características base, conforman 30 características de este subgrupo.
 
 \subsubsection{Características relativas al día de la semana}
 
@@ -200,11 +203,11 @@ Se usan 14 características binarias. 7 de ellas para indicar el día de la sema
 
 \subsubsection{Otras características básicas}
 
-Incluye 5 características tipo medatadatos del post, como puede ser la longitud del post o el número de veces que se ha compartido. 
+Incluye 5 características tipo medatadatos del post, como puede ser la longitud del post o el número de veces que se ha compartido.
 
 \subsection{Exploración del \emph{Dataset}} \label{exploracion_datos}
 
-Con la función \lstinline{explore_dataset}, mostramos algunas estadísticas de las variables aleatorias que componen las columnas de nuestro conjunto de datos. Notar que en esta exploración ya hemos separado el conjunto de \emph{training} y \emph{testing}, con la función \lstinline{split_train_test} que más adelante, en \emph{\ref{preprocesado}. \nameref{preprocesado}}. 
+Con la función \lstinline{explore_dataset}, mostramos algunas estadísticas de las variables aleatorias que componen las columnas de nuestro conjunto de datos. Notar que en esta exploración ya hemos separado el conjunto de \emph{training} y \emph{testing}, con la función \lstinline{split_train_test} que más adelante, en \emph{\ref{preprocesado}. \nameref{preprocesado}}.
 
 La descripción de las variables se muestra en la siguiente tabla:
 
@@ -277,15 +280,153 @@ La descripción de las variables se muestra en la siguiente tabla:
 
 En la tabla no hemos mostrado la estadística de \emph{missing values}, pues como ya hemos comentado, no tenemos datos faltantes en este \emph{dataset}. Tampoco mostramos la columna en la que se muestra el tipo, pues todas las variables son o bien flotantes o bien enteras, y por tanto no es necesaria una técnica de codificación de variables categóricas como puede ser \emph{one hot encoding}.
 
-En esta tabla queda clara la necesitada de realizar un proceso de estandarización o bien de normalización. Los modelos que vamos a emplear son muy sensibles a variables en escalas diferentes. Otros directamente se comportam mucho mejor cuando tenemos media cero y desviación típica uno. Estas escalas diferentes se pueden ver, por ejemplo, con la columna 0 que se mueve en el rango $[36.0, 4.86 * 10^8]$, mientras que la columna 43 se mueve en el rango $[0, 1]$
+En esta tabla queda clara la necesitada de realizar un proceso de estandarización o bien de normalización. Los modelos que vamos a emplear son muy sensibles a variables en escalas diferentes. Otros directamente se comportam mucho mejor cuando tenemos media cero y desviación típica uno.
+
+Estas escalas diferentes se pueden ver, por ejemplo, con la columna 0 que se mueve en el rango $[36.0, 4.86 * 10^8]$ y que tiene una desviación típica de $7.4 * 10^6$, mientras que la columna 43 se mueve en el rango $[0, 1]$ y tiene una desviación típica de $3.5 * 10$.
 
 \pagebreak
 
 \section{Preprocesamiento de los datos} \label{preprocesado}
 
+El preprocesamiento de los datos se divide en tres etapas: estandarización, selección de componentes principales y transformación polinómica de los datos.
+
+A la hora de aplicar \emph{Cross Validation} para seleccionar nuestro modelo final, compararemos los resultados obtenidos tanto en el conjunto transformado con \emph{PCA} y trasnformaciones polinómicas como en el conjunto de datos original al que solo hemos aplicado estandarización, quedándonos con el conjunto de datos en el que se haya encontrado la hipótesis con mejores resultados.
+
+\subsection{Eliminación de outliers}
+
+A la hora de borrar \emph{outliers} no hemos seguido la técnica básica de eliminar aquellos ejemplos en los que, en alguna variable aleatoria, se alejen de la media más de tres veces la desviación típica. Esta aproximación univariante eliminaba un porcentaje demasiado alto de los datos, y por tanto, hemos decidido emplear una técnica más inteligente a la hora de borrar los valores atípicos, basada en la distancia de Mahalanobis. Esta distancia se parece a la distancia euclíde, sin embargo, se tiene en cuenta la correlación entre las variables aleatorias \cite{wiki_mahalanobis:online}.
+
+Para eliminar los outliers hacemos uso de la función \lstinline{remove_outliers} que a su vez, hace uso de la función proporcionada por \emph{sklearn} \lstinline{EllipticEnvelope}. En esta técnica estamos suponiendo que nuestro \emph{dataset} sigue aproximadamente una distribución Gaussiana multidimensional. Intenta ajustar una elipse a los puntos centrales, ignorando los puntos que quedan fuera de esta elipse ajustada. La distancia de Mahalanobis se usa como una medida de cómo de atípico es un punto de nuestro \emph{dataset} \cite{sklearn_outlier:online}. Esta distancia viene dada por.
+
+$$d_m(x, y) := \sqrt{(x - y)^T \Sigma^{-1} (x - y)}$$
+
+Es importante comentar el uso del parámetro \lstinline{contamination}. Este parámetro indica la proporción de \emph{outliers} que estimamos que tiene nuestro \emph{dataset}, es decir, la \emph{"contaminación"} esperada del \emph{dataset}. En nuestro caso hemos fijado este valor a un $5\%$.
+
+Es importante realizar como primer paso el borrado de \emph{outliers}, pues las posteriores técnicas como estandarización o análisis de componentes principales son muy sensibles a estos \emph{outliers}.
+
+\subsection{Estandarización de los datos}
+
+A la hora de estandarizar los datos, buscamos que las variables aleatorias de nuestro \emph{dataset} sigan una distribución normal de media cero y desviación típica uno.
+
+Para ello, y supuesta la hipótesis de que nuestras variables siguen una distribución normal de media y varianza desconocida, usamos el hecho de que cualquier variable aleatoria $X$ que siga una normal verifica que:
+$$X_{norm} := \frac{{X- \bar{X}}}{X_{\sigma}} \Longrightarrow X_{norm} \sim \mathcal{N}(0, 1)$$
+
+La media y la desviación típica son muy sensibles a valores atípicos, por lo que es necesario quitar los \emph{outliers} antes de estandarizar nuestros datos, como ya hemos comentado.
+
+Tras dicha limpieza de outliers aplicamos el estandarizado con la función \lstinline{standarize_dataset}, que hace uso de la función \lstinline{StandardScaler} proporcionada por \emph{sklearn}.
+
+A esta función le pasamos como parámetros tanto el conjunto de entrenamiento como el conjunto de test. El conjunto de test no se usa a la hora de calcular la transformación, solo se emplea el conjunto de entrenamiento para estos cálculos. El conjunto de test se pasa con el único propósito de aplicar la misma trasnformación que la calculada y aplicada en el conjunto de test. Todo esto para no caer en un caso de \emph{data snooping}.
+
+Como hemos comentado previamente, todos los datos con los que vamos a entrenar los distintos modelos van a pasar por estas dos primeras etapas, por lo que, tras haber eliminado los \emph{outliers} y haber estandarizado nuestros datos, haremos una copia de nuestros datos en \lstinline{df_train_original_x} y \lstinline{df_test_original_x}.
+
+Tras estandarizar los datos, mostramos las estadísticas de algunas columnas del conjunto estandarizado:
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+  \hline
+\textbf{col}  &         \textbf{mean}&         \textbf{median}&           \textbf{std}&     \textbf{min}&           \textbf{max}&           \textbf{p25}&           \textbf{p75} \\
+\hline
+0  &  3.250e-17& -0.34&  1.00&  -0.47&   15.65& -0.45& -0.00\\
+1  &  7.671e-16& -0.22&  1.00&  -0.22&    9.02& -0.22& -0.22\\
+2  & -1.947e-16& -0.46&  1.00&  -0.56&    9.33& -0.55&  0.17\\
+3  &  1.025e-15& -0.32&  1.00&  -1.17&    4.02& -0.77&  0.36\\
+\ldots  &  \ldots & \ldots &  \ldots &  \ldots &    \ldots & \ldots &  \ldots \\
+50 &  1.250e-16& -0.41&  1.00&  -0.41&    2.40& -0.41& -0.41\\
+51 &  4.213e-16& -0.41&  1.00&  -0.41&    2.43& -0.41& -0.41\\
+52 & -7.532e-16& -0.41&  1.00&  -0.41&    2.43& -0.41& -0.41\\
+\hline
+  \end{tabular}
+  \caption{Estadísticas del \emph{dataset} tras estandarizar}
+  \label{tabla_std}
+\end{table}
+
+Nuestro proceso de estandarización en principio solo se preocupa de conseguir media cero y desviación típica uno. Pero como se puede apreciar en la anterior tabla, este proceso provoca colateralmente que el rango de las distintas variables no sea tan dispar, lo cual es beneficioso como ya se ha comentado.
+
+\subsection{Análisis de Componentes Principales (PCA)}
+
+Para el análisis de componentes principales hacemos uso de la función \lstinline{apply_PCA}. Queremos que tras la transformación de nuestro espacio obtengamos el $99\%$ de la varianza de nuestro \emph{dataset} original. Por tanto, pasaremos a la función \lstinline{PCA} de \emph{sklearn} el parámetro \lstinline{n_components} igualado a $0.99$, lo que fuerza a que seleccione el número de componentes principales necesarias para explicar el $99\%$ o más de nuestra varianza.
+
+% TODO -- explica mejor esto chiquilla
+Vamos a observar en la siguiente tabla el número de componentes que obtenemos con el $99\%$ de la varianza y la varianza explicada en cada una de ellas. El método de \emph{PCA} devuelve las componentes ordenadas de mayor varianza explicada a menor.
+
+% TODO -- poner solo 3 cifras decimales que Nicolas lo penaliza
+\begin{table}[!htb]
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Nº de componente}  &         \textbf{Varianza explicada} \\
+    \hline
+    1& 0.365 \\
+    2& 0.044\\
+    3& 0.040\\
+    4& 0.039\\
+    5& 0.038\\
+    6& 0.037\\
+    7& 0.032\\
+    8& 0.026\\
+    9& 0.025 \\
+    10& 0.024\\
+    11& 0.023\\
+    12& 0.021\\
+    13& 0.021\\
+    14& 0.020\\
+    15& 0.020\\
+    16& 0.020\\
+    \hline
+  \end{tabular}
+  \quad
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Nº de componente}  &         \textbf{Varianza explicada} \\
+    \hline
+    17& 0.019\\
+    18& 0.019\\
+    19& 0.018\\
+    20& 0.017\\
+    21& 0.016\\
+    22& 0.016\\
+    23& 0.016\\
+    24& 0.014\\
+    25& 0.012\\
+    26& 0.007\\
+    27& 0.007\\
+    28& 0.006\\
+    29& 0.006\\
+    30& 0.005\\
+    31& 0.003\\
+    \hline
+  \end{tabular}
+\caption{Varianza explicada por las componentes principales obtenidas}
+\end{table}
+
+Tenemos un total de 31 componentes que explican el 0.9906 de la varianza. Obtenemos así que la dimensionalidad de nuestro espacio muestral se reduce un $40\%$ aproximadamente.
+
+Tras aplicar \emph{PCA}, las variables vuelven a estar en rangos dispares. Sin embargo, esperamos a aplicar las trasnformaciones no lineales de los datos para volver a realizar la estandarización. 
+
+\subsection{Transformación polinómica}
+
+% TODO -- hablar de d_vc
+
+Al haber reducido la dimensionalidad de nuestro espacio, el tamaño de nuestro \emph{dataset} permite realizar una transformación cuadrática de nuestros datos sin que el coste computacional sea excesivo, y sin que tengamos problemas de generalización. 
+
+Hemos considerado esta transformación pues no disponemos de conocimiento experto del problema para decidir en base a ello una tal transformación. Tampoco en el \emph{paper} original \cite{original_paper:paper} se presenta una transformación en base a conocimiento experto.
+
+Por tanto, consideramos una transformación polinómica $\phi_q$ de grado $q$ fijado, pues pueden dar buenos resultados sin mucha información a priori. Fijamos $q=2$ por el coste computacional ya mencionado y por buscar una buena generalización. Una transformación polinómica de mayor grado no sería abordable en nuestras máquinas (hicimos la prueba y comprobamos que, efectivamente, no era abordable en un tiempo razonable) y podría llegar a dar problemas de generalización.
+
+% TODO - la frase de los monomios es que la dices mejor y me he enterado regular
+La transformación consiste en considerar los monomios en varias variables de hasta grado 2. Por ejemplo, $x_1 x_2, x_1, x_1^2, \ldots$
+
+La dimensión de nuestro espacio transformado es entonces 
+
+$$d = {1+2n}+{{n(n-1)}\over{2}} = {1+2*31}+{{31*30}\over{2}} = 528$$
+
+donde $n$ es el tamaño de nuestro conjunto de entrenamiento.
+
+Ahora, tenemos varianzas y rangos de las variables dispares. Esto es claro porque estamos considerando transformaciones no lineales que no van a respetar las escalas similares de nuestros datos, ni la distribución centrada en cero. Por tanto es necesario aplicar de nuevo estandarización al nuevo conjunto de entrenamiento. El efecto es el mismo que el comentado en la \emph{Tabla \ref{tabla_std}. \nameref{tabla_std}}, y por tanto no mostramos esta tabla ya que no va a aportar información nueva.
+
 \pagebreak
 
-\section{Selección del modelo} \label{eleccion_modelos}
+\section{Selección del modelo} \label{seleccion_modelos}
 
 \pagebreak
 
