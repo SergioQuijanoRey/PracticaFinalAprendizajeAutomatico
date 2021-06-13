@@ -147,7 +147,7 @@ $$f: \mathbb{X} \rightarrow \mathbb{Y}$$
 
 donde $\mathbb{X}$ es el conjunto de las 53 variables aleatorias de entrada, e $\mathbb{Y}$ es la variable aleatoria de salida, entera.
 
-Por lo tanto, nuestro objetivo es encontrar tanto una clase de funciones $\mathcal{H}$ como un algorito de aprendizaje $\mathcal{A}$ que nos devuelva un $h \in \mathcal{H}$ que se asemeje a la función objetivo, es decir
+Por lo tanto, nuestro objetivo es encontrar tanto una clase de funciones $\mathcal{H}$ como un algoritmo de aprendizaje $\mathcal{A}$ que nos devuelva un $h \in \mathcal{H}$ que se asemeje a la función objetivo, es decir
 
 $$h(x) \approx f(x), \forall x \in \mathbb{X}$$
 
@@ -155,9 +155,9 @@ La noción de que ambas funciones sean aproximadas se especificará en \emph{\re
 
 \subsection{Descripción de las características}
 
-Para obtener las características el autor del paper \cite{original_paper:paper} ha empleado un \emph{crawler} programado en \lstinline{JAVA} y el lenguaje de consulta de \emph{Facebook} (\lstinline{FQL}), con el que se ha recogido información de las páginas de \lstinline{Facebook} de más interés \cite{original_paper:paper}. A partir de dicha informacióm, solo se consideran los comentarios que fueron publicados en los últimos tres días respecto al momento en el que el \emph{crawler} recolecta los datos. Esto pues se presupone que los posts más antiguos no van a recibir más atención. También se eliminan los posts de los que faltan comentarios o algún detalle necesario, de ahí que en nuestro dataset no tengamos \emph{missing values}, como se mostrará en \emph{\ref{exploracion_datos}. \nameref{exploracion_datos}}.
+Para obtener las características el autor del paper \cite{original_paper:paper} ha empleado un \emph{crawler} programado en \lstinline{JAVA} y el lenguaje de consulta de \emph{Facebook} (\lstinline{FQL}), con el que se ha recogido información de las páginas de \lstinline{Facebook} de más interés \cite{original_paper:paper}. A partir de dicha información, solo se consideran los comentarios que fueron publicados en los últimos tres días respecto al momento en el que el \emph{crawler} recolecta los datos. Esto pues se presupone que los posts más antiguos no van a recibir más atención. También se eliminan los posts de los que faltan comentarios o algún detalle necesario, de ahí que en nuestro dataset no tengamos \emph{missing values}, como se mostrará en \emph{\ref{exploracion_datos}. \nameref{exploracion_datos}}.
 
-Como se ha dicho previamente tenemmos 53 características que podemos dividirlas en distintos subgrupos.
+Como se ha dicho previamente tenemos 53 características que podemos dividirlas en distintos subgrupos.
 
 \subsubsection{Características de la página}
 
@@ -202,7 +202,7 @@ Se usan 14 características binarias. 7 de ellas para indicar el día de la sema
 
 \subsubsection{Otras características básicas}
 
-Incluye 5 características tipo medatadatos del post, como puede ser la longitud del post o el número de veces que se ha compartido.
+Incluye 5 características tipo metadatos del post, como puede ser la longitud del post o el número de veces que se ha compartido.
 
 \subsection{Exploración del \emph{Dataset}} \label{exploracion_datos} \label{boxplot}
 
@@ -283,7 +283,7 @@ La descripción de las variables se muestra en la siguiente tabla:
 
 En la tabla no hemos mostrado la estadística de \emph{missing values}, pues como ya hemos comentado, no tenemos datos faltantes en este \emph{dataset}. Tampoco mostramos la columna en la que se muestra el tipo, pues todas las variables son o bien flotantes o bien enteras, y por tanto no es necesaria una técnica de codificación de variables categóricas como puede ser \emph{one hot encoding}.
 
-En esta tabla queda clara la necesidad de realizar un proceso de estandarización o bien de normalización. Los modelos que vamos a emplear son muy sensibles a variables en escalas diferentes. Otros directamente se comportam mucho mejor cuando tenemos media cero y desviación típica uno.
+En esta tabla queda clara la necesidad de realizar un proceso de estandarización o bien de normalización. Los modelos que vamos a emplear son muy sensibles a variables en escalas diferentes. Otros directamente se comportan mucho mejor cuando tenemos media cero y desviación típica uno.
 
 Estas escalas diferentes se pueden ver, por ejemplo, con la columna 0 que se mueve en el rango $[36.0, 4.86 * 10^8]$ y que tiene una desviación típica de $7.4 * 10^6$, mientras que la columna 43 se mueve en el rango $[0, 1]$ y tiene una desviación típica de $3.5 * 10$.
 
@@ -295,7 +295,7 @@ En la función \lstinline{explore_dataset} también hacemos un gráfico de cajas
   \caption{Gráfico de cajas y bigotes de la variable de salida}
 \end{figure}
 
-Por la cantida de valores atípicos, no se ve bien que sea una gráfica de cajas y bigotes, así que hacemos \emph{zoom} en la imagen obteniendo la siguiente gráfica:
+Por la cantidad de valores atípicos, no se ve bien que sea una gráfica de cajas y bigotes, así que hacemos \emph{zoom} en la imagen obteniendo la siguiente gráfica:
 
 \begin{figure}[H]
   \centering
@@ -318,11 +318,11 @@ Por tanto, como se comentará en \emph{\ref{metrica_error}. \nameref{metrica_err
 
 El preprocesamiento de los datos se divide en tres etapas: estandarización, selección de componentes principales y transformación polinómica de los datos.
 
-A la hora de aplicar \emph{Cross Validation} para seleccionar nuestro modelo final, compararemos los resultados obtenidos tanto en el conjunto transformado con \emph{PCA} y trasnformaciones polinómicas como en el conjunto de datos original al que solo hemos aplicado estandarización, quedándonos con el conjunto de datos en el que se haya encontrado la hipótesis con mejores resultados.
+A la hora de aplicar \emph{Cross Validation} para seleccionar nuestro modelo final, compararemos los resultados obtenidos tanto en el conjunto transformado con \emph{PCA} y transformaciones polinómicas como en el conjunto de datos original al que solo hemos aplicado estandarización, quedándonos con el conjunto de datos en el que se haya encontrado la hipótesis con mejores resultados.
 
 \subsection{Eliminación de outliers}
 
-A la hora de borrar \emph{outliers} no hemos seguido la técnica básica de eliminar aquellos ejemplos en los que, en alguna variable aleatoria, se alejen de la media más de tres veces la desviación típica. Esta aproximación univariante eliminaba un porcentaje demasiado alto de los datos, y por tanto, hemos decidido emplear una técnica más inteligente a la hora de borrar los valores atípicos, basada en la distancia de Mahalanobis. Esta distancia se parece a la distancia euclíde, sin embargo, se tiene en cuenta la correlación entre las variables aleatorias \cite{wiki_mahalanobis:online}.
+A la hora de borrar \emph{outliers} no hemos seguido la técnica básica de eliminar aquellos ejemplos en los que, en alguna variable aleatoria, se alejen de la media más de tres veces la desviación típica. Esta aproximación univariante eliminaba un porcentaje demasiado alto de los datos, y por tanto, hemos decidido emplear una técnica más inteligente a la hora de borrar los valores atípicos, basada en la distancia de Mahalanobis. Esta distancia se parece a la distancia euclídea, sin embargo, se tiene en cuenta la correlación entre las variables aleatorias \cite{wiki_mahalanobis:online}.
 
 Para eliminar los outliers hacemos uso de la función \lstinline{remove_outliers} que a su vez, hace uso de la función proporcionada por \emph{sklearn} \lstinline{EllipticEnvelope}. En esta técnica estamos suponiendo que nuestro \emph{dataset} sigue aproximadamente una distribución Gaussiana multidimensional. Intenta ajustar una elipse a los puntos centrales, ignorando los puntos que quedan fuera de esta elipse ajustada. La distancia de Mahalanobis se usa como una medida de cómo de atípico es un punto de nuestro \emph{dataset} \cite{sklearn_outlier:online}. Esta distancia viene dada por.
 
@@ -343,7 +343,7 @@ La media y la desviación típica son muy sensibles a valores atípicos, por lo 
 
 Tras dicha limpieza de outliers aplicamos el estandarizado con la función \lstinline{standarize_dataset}, que hace uso de la función \lstinline{StandardScaler} proporcionada por \emph{sklearn}.
 
-A esta función le pasamos como parámetros tanto el conjunto de entrenamiento como el conjunto de test. El conjunto de test no se usa a la hora de calcular la transformación, solo se emplea el conjunto de entrenamiento para estos cálculos. El conjunto de test se pasa con el único propósito de aplicar la misma trasnformación que la calculada y aplicada en el conjunto de test. Todo esto para no caer en un caso de \emph{data snooping}.
+A esta función le pasamos como parámetros tanto el conjunto de entrenamiento como el conjunto de test. El conjunto de test no se usa a la hora de calcular la transformación, solo se emplea el conjunto de entrenamiento para estos cálculos. El conjunto de test se pasa con el único propósito de aplicar la misma transformación que la calculada y aplicada en el conjunto de test. Todo esto para no caer en un caso de \emph{data snooping}.
 
 Como hemos comentado previamente, todos los datos con los que vamos a entrenar los distintos modelos van a pasar por estas dos primeras etapas, por lo que, tras haber eliminado los \emph{outliers} y haber estandarizado nuestros datos, haremos una copia de nuestros datos en \lstinline{df_train_original_x} y \lstinline{df_test_original_x}.
 
@@ -427,7 +427,7 @@ Vamos a observar en la siguiente tabla el número de componentes que obtenemos c
 
 Tenemos un total de 31 componentes que explican el 0.9906 de la varianza. Obtenemos así que la dimensionalidad de nuestro espacio muestral se reduce un $40\%$ aproximadamente.
 
-Tras aplicar \emph{PCA}, las variables vuelven a estar en rangos dispares. Sin embargo, esperamos a aplicar las trasnformaciones no lineales de los datos para volver a realizar la estandarización.
+Tras aplicar \emph{PCA}, las variables vuelven a estar en rangos dispares. Sin embargo, esperamos a aplicar las transformaciones no lineales de los datos para volver a realizar la estandarización.
 
 \subsection{Transformación polinómica}
 
@@ -465,7 +465,7 @@ Para los modelos lineales vamos a considerar el ajuste de un hiperplano usando d
 
 El interés de estos modelos lineales es que suponen usar modelos de baja complejidad, que probablemente no tengan apenas problemas de generalización, y que a pesar de su sencillez funcionan bien en muchos casos.
 
-Podríamos haber fijado un tipo de regularización en base al problema con el que estamos tratando. Sin embargo, como estamos comparando dos conjuntos de datos distintos, probamos con los dos regularizadores. En el modelo al que aplicamos \emph{PCA} y las transformaciones polinómicas nos decantamos por emplear \emph{Lasso}, pues fuerza a que algunas componentes sean cero, y esto es interesante para anular términos de la transformación polinómica que no sean interesantes. En el conjunto de datos original, tenemos 52 características para un total de 32839 ejemplos de entrenamiento. Usando la regla práctica vista en teoría $N >> d_{VC} * 10$, y teniendo en cuenta que en el caso de 52 variables y que estamos considerando modelos lineales, se verifica con mucho márgen que $32839 >> 10 * 53$. Es por esto que probamos con Ridge, no tenemos la necesidad a priori de ignorar algunas características.
+Podríamos haber fijado un tipo de regularización en base al problema con el que estamos tratando. Sin embargo, como estamos comparando dos conjuntos de datos distintos, probamos con los dos regularizadores. En el modelo al que aplicamos \emph{PCA} y las transformaciones polinómicas nos decantamos por emplear \emph{Lasso}, pues fuerza a que algunas componentes sean cero, y esto es interesante para anular términos de la transformación polinómica que no sean interesantes. En el conjunto de datos original, tenemos 52 características para un total de 32839 ejemplos de entrenamiento. Usando la regla práctica vista en teoría $N >> d_{VC} * 10$, y teniendo en cuenta que en el caso de 52 variables y que estamos considerando modelos lineales, se verifica con mucho margen que $32839 >> 10 * 53$. Es por esto que probamos con Ridge, no tenemos la necesidad a priori de ignorar algunas características.
 
 Para Ridge usamos el clasificador \lstinline{Ridge} y para Lasso el clasificador \lstinline{Lasso}, ambos de la librería \lstinline{sklearn}. Los parámetros prefijados son:
 
@@ -475,7 +475,7 @@ Para Ridge usamos el clasificador \lstinline{Ridge} y para Lasso el clasificador
   \item \textbf{Resolutor para Ridge}: Cholesky
 \end{itemize}
 
-Estamos fijando \emph{Cholesky} como resolutor para \emph{Ridge}. De la documentación oficial de \lstinline{sklearn} \cite{sk_linear:online}, sabemoss que  esste resolutor usa una solución cerrada usando el despeje matricial proporcionado por \lstinline{scipy.linalg.solve}. Para \emph{Lasso}, se usa \emph{Coordinate Descent} como algoritmo de aprendizaje. En este algoritmo, en cada paso, se escoge una coordenada según una política dada, y se minimiza variando esa coordenada, dejando el resto fijas \cite{coordinate_descent:online}.
+Estamos fijando \emph{Cholesky} como resolutor para \emph{Ridge}. De la documentación oficial de \lstinline{sklearn} \cite{sk_linear:online}, sabemos que  este resolutor usa una solución cerrada usando el despeje matricial proporcionado por \lstinline{scipy.linalg.solve}. Para \emph{Lasso}, se usa \emph{Coordinate Descent} como algoritmo de aprendizaje. En este algoritmo, en cada paso, se escoge una coordenada según una política dada, y se minimiza variando esa coordenada, dejando el resto fijas \cite{coordinate_descent:online}.
 
 Los parámetros que probamos con \emph{Cross Validation} son:
 
@@ -504,7 +504,7 @@ Además, usamos como algoritmo de aprendizaje \emph{Adam}. Es una extensión del
 
 En \emph{SGD} mantenemos un \emph{learning rate} fijo durante todo el entrenamiento. En \emph{Adam} se usa el primer y segundo momento del gradiente para variar el \emph{learning rate}, usando una media exponencial sobre estos dos elementos en la que se pueden fijar los parámetros para controlar el decaimiento \cite{adam:online}.
 
-Como ventajas que nos llevan a emplear este algoritmo, podemos citar que es computacionalmente eficiente, apropiado para problemas con muchos datos o altas dimensionalidades, poco afectado por gradientes dispersos o con mucho rudio. Su eficacia ha sido probada en distintos casos de uso reales.
+Como ventajas que nos llevan a emplear este algoritmo, podemos citar que es computacionalmente eficiente, apropiado para problemas con muchos datos o altas dimensionalidades, poco afectado por gradientes dispersos o con mucho ruido. Su eficacia ha sido probada en distintos casos de uso reales.
 
 Los parámetros que probamos con \emph{Cross Validation} son:
 
@@ -628,7 +628,7 @@ Los resultados obtenidos se muestran en las siguientes tablas:
   \resizebox{\columnwidth}{!}{
   \begin{tabular}{|c|c|c|c|}
   \hline
-  \textbf{Modelo} & \textbf{Parametros} & \textbf{Media MSE} & \textbf{STD MSE} \\
+  \textbf{Modelo} & \textbf{Parámetros} & \textbf{Media MSE} & \textbf{STD MSE} \\
   \hline
   Ridge  & $\alpha$ = 1  & -432.31 & 122.33  \\
   MLP    & $\alpha$ = 1, nº neur = 100 & -316.19  & 181.75 \\
@@ -715,7 +715,7 @@ Además, se confirma nuestra hipótesis de que, en este \emph{dataset} con pocas
   \resizebox{\columnwidth}{!}{
   \begin{tabular}{|c|c|c|c|}
   \hline
-  \textbf{Modelo} & \textbf{Parametros} & \textbf{Media MSE} & \textbf{STD MSE} \\
+  \textbf{Modelo} & \textbf{Parámetros} & \textbf{Media MSE} & \textbf{STD MSE} \\
   \hline
   Lasso  & $\alpha$ = 0.1  & -369.36 & 117.27  \\
   \textbf{MLP}    & $\alpha$ = \textbf{1}, nº neur = \textbf{75} & \textbf{-348.79}  & \textbf{171.30} \\
@@ -779,7 +779,7 @@ Como \emph{baselines} vamos a emplear los siguientes modelos:
 
 \begin{itemize}
     \item El segundo mejor modelo en el conjunto de datos al que solo aplicas borrado de \emph{outliers} (para poder realizar comparaciones justas que no dependan del conjunto de datos)
-    \item Un regresor que siempre devuelve la mediia, usando \lstinline{DummyRegressor} de \lstinline{sklearn}
+    \item Un regresor que siempre devuelve la media, usando \lstinline{DummyRegressor} de \lstinline{sklearn}
     \item Un regresor que siempre devuelve el valor cero, usando \lstinline{DummyRegressor}
 \end{itemize}
 
@@ -806,6 +806,8 @@ Nuestro modelo no está prediciendo de forma sistemática valores cercanos a la 
 Cabe destacar que el \emph{baseline} \emph{MLP} obtiene un error cuadrático medio en training de 255.91, y por tanto, está teniendo problemas de generalización mucho más graves que el modelo que hemos considerado.
 
 Notar que cuando obtenemos un valor de $R^2$ negativo, esto indica que nuestro modelo predice peor que el valor constantemente la media (por tanto \emph{Dummy} usando la media obtiene $R^2 = 0$).
+
+Estimamos el valor de $E_{out}$ con $E_{test}$, por lo que tenemos un error cuadrático medio fuera de la muestra de aproximadamente 541.50.
 
 Respecto a las curvas de aprendizaje, mantenemos el error en el conjunto de entrenamiento más o menos constante, gracias a la regularización que estamos aplicando. Mientras, el error en el conjunto de test desciende, y por tanto, estamos aprendiendo de forma efectiva la función. El error en \emph{testing} no alcanza una meseta ni tampoco un mínimo que no sea en el borde, así que es razonable pensar que con un conjunto de datos más grande podríamos mejorar el rendimiento de nuestro modelo.
 
