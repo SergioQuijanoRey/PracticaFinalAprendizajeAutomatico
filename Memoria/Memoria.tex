@@ -145,19 +145,19 @@ Estamos ante un problema de regresión, pues nuestro objetivo es predecir el nú
 
 $$f: \mathbb{X} \rightarrow \mathbb{Y}$$
 
-donde $\mathbb{X}$ es el conjunto de las 53 variables aleatorias de entrada, e $\mathbb{Y}$ es la variable aleatoria de salida, entera.
+donde $\mathbb{X}$ es el conjunto de las 52 variables aleatorias de entrada, e $\mathbb{Y}$ es la variable aleatoria de salida, entera.
 
 Por lo tanto, nuestro objetivo es encontrar tanto una clase de funciones $\mathcal{H}$ como un algoritmo de aprendizaje $\mathcal{A}$ que nos devuelva un $h \in \mathcal{H}$ que se asemeje a la función objetivo, es decir
 
 $$h(x) \approx f(x), \forall x \in \mathbb{X}$$
 
-La noción de que ambas funciones sean aproximadas se especificará en \emph{\ref{eleccion_modelos}. \nameref{eleccion_modelos}}.
+La noción de que ambas funciones sean aproximadas se especificará en \emph{\ref{seleccion_modelos}. \nameref{seleccion_modelos}}.
 
 \subsection{Descripción de las características}
 
-Para obtener las características el autor del paper \cite{original_paper:paper} ha empleado un \emph{crawler} programado en \lstinline{JAVA} y el lenguaje de consulta de \emph{Facebook} (\lstinline{FQL}), con el que se ha recogido información de las páginas de \lstinline{Facebook} de más interés \cite{original_paper:paper}. A partir de dicha información, solo se consideran los comentarios que fueron publicados en los últimos tres días respecto al momento en el que el \emph{crawler} recolecta los datos. Esto pues se presupone que los posts más antiguos no van a recibir más atención. También se eliminan los posts de los que faltan comentarios o algún detalle necesario, de ahí que en nuestro dataset no tengamos \emph{missing values}, como se mostrará en \emph{\ref{exploracion_datos}. \nameref{exploracion_datos}}.
+Para obtener las características el autor del paper \cite{original_paper:paper} ha empleado un \emph{crawler} programado en \lstinline{JAVA} y el lenguaje de consulta de \emph{Facebook} (\lstinline{FQL}), con el que se ha recogido información de las páginas de \lstinline{Facebook} de más interés \cite{original_paper:paper}. A partir de dicha información, solo se consideran los comentarios que fueron publicados en los últimos tres días respecto al momento en el que el \emph{crawler} recolecta los datos, pues se presupone que los posts más antiguos no van a recibir más atención. También se eliminan los posts de los que faltan comentarios o algún detalle necesario, de ahí que en nuestro dataset no tengamos \emph{missing values}, como se mostrará en \emph{\ref{exploracion_datos}. \nameref{exploracion_datos}}.
 
-Como se ha dicho previamente tenemos 53 características que podemos dividirlas en distintos subgrupos.
+Como se ha dicho previamente tenemos 52 características de entrada que podemos dividirlas en distintos subgrupos.
 
 \subsubsection{Características de la página}
 
@@ -208,11 +208,11 @@ Incluye 5 características tipo metadatos del post, como puede ser la longitud d
 
 Como ya hemos comentado, el problema presenta distintas variantes en función de las referencias temporales fijadas. Por tanto, tenemos distintos problemas de regresión con distintos dominios, es decir, no tiene sentido juntar todas las variantes del problema de las que disponemos. Así, nos quedamos solo con los datos relativos a la variante 1.
 
-Con la función \lstinline{explore_dataset}, mostramos algunas estadísticas de las variables aleatorias que componen las columnas de nuestro conjunto de datos. Notar que en esta exploración ya hemos separado el conjunto de \emph{training} y \emph{testing}, con la función \lstinline{split_train_test} que más adelante, en \emph{\ref{preprocesado}. \nameref{preprocesado}}.
+Con la función \lstinline{explore_dataset}, mostramos algunas estadísticas de las variables aleatorias que componen las columnas de nuestro conjunto de datos. Notar que en esta exploración ya hemos separado el conjunto de \emph{training} y \emph{testing}, con la función \lstinline{split_train_test} que más adelante, en \emph{\ref{preprocesado}. \nameref{preprocesado}}, se explicará.
 
 Tras esta separación nos quedamos con 32839 ejemplos para entrenamiento y 8210 ejemplos para test.
 
-La descripción de las variables se muestra en la siguiente tabla:
+La descripción de las variables, en el conjunto de entrenamiento, se muestra en la siguiente tabla:
 
 \begin{table}[H]
   \centering
@@ -311,7 +311,7 @@ A partir de estas gráficas quedan claros los siguientes hechos:
   \item Tenemos una gran cantidad de valores atípicos en la variable de salida. Atípicos en el sentido de que se alejan del percentil 75 más de 1.5 veces el rango intercuartílico
 \end{itemize}
 
-Por tanto, como se comentará en \emph{\ref{metrica_error}. \nameref{metrica_error}}, es una buena idea escoger como métrica de error para nuestros modelos el error cuadrático medio, pues penaliza más predicciones que se alejen de los valores de etiquetado. Con ello intentamos evitar que los modelos tiendan a predecir constantemente un valor bajo de comentarios, pues la mayoría de los datos están concentrados en este rango de salida.
+Por tanto, como se comentará en \emph{\ref{metrica_error}. \nameref{metrica_error}}, es una buena idea escoger como métrica de error para nuestros modelos el error cuadrático medio, pues penaliza más a las predicciones que se alejen de los valores de etiquetado. Con ello intentamos evitar que los modelos tiendan a predecir constantemente un valor bajo de comentarios, pues la mayoría de los datos están concentrados en este rango de salida.
 \pagebreak
 
 \section{Preprocesamiento de los datos} \label{preprocesado}
@@ -328,7 +328,7 @@ Para eliminar los outliers hacemos uso de la función \lstinline{remove_outliers
 
 $$d_m(x, y) := \sqrt{(x - y)^T \Sigma^{-1} (x - y)}$$
 
-Es importante comentar el uso del parámetro \lstinline{contamination}. Este parámetro indica la proporción de \emph{outliers} que estimamos que tiene nuestro \emph{dataset}, es decir, la \emph{"contaminación"} esperada del \emph{dataset}. En nuestro caso hemos fijado este valor a un $5\%$.
+Es importante comentar el uso del parámetro \lstinline{contamination}. Este parámetro indica la proporción de \emph{outliers} que estimamos que tiene nuestro \emph{dataset}, es decir, la `\emph{contaminación}' esperada del \emph{dataset}. En nuestro caso hemos fijado este valor a un $5\%$.
 
 Es importante realizar como primer paso el borrado de \emph{outliers}, pues las posteriores técnicas como estandarización o análisis de componentes principales son muy sensibles a estos \emph{outliers}.
 
@@ -433,9 +433,9 @@ Tras aplicar \emph{PCA}, las variables vuelven a estar en rangos dispares. Sin e
 
 Al haber reducido la dimensionalidad de nuestro espacio, el tamaño de nuestro \emph{dataset} permite realizar una transformación cuadrática de nuestros datos sin que el coste computacional sea excesivo, y sin que tengamos problemas de generalización.
 
-Hemos considerado esta transformación pues no disponemos de conocimiento experto del problema para decidir en base a ello una tal transformación. Tampoco en el \emph{paper} original \cite{original_paper:paper} se presenta una transformación en base a conocimiento experto.
+Hemos considerado esta transformación pues no disponemos de conocimiento experto del problema para decidir en base a ello una transformación concreta. Tampoco en el \emph{paper} original \cite{original_paper:paper} se presenta una transformación en base a conocimiento experto.
 
-Por tanto, consideramos una transformación polinómica $\phi_q$ de grado $q$ fijado, pues pueden dar buenos resultados sin mucha información a priori. Fijamos $q=2$ por el coste computacional ya mencionado y por buscar una buena generalización. Una transformación polinómica de mayor grado no sería abordable en nuestras máquinas (hicimos la prueba y comprobamos que, efectivamente, no era abordable en un tiempo razonable) y podría llegar a dar problemas de generalización.
+Por tanto, consideramos una transformación polinómica $\phi_q$ de grado $q$ fijado, pues pueden dar buenos resultados sin mucha información a priori. Fijamos $q=2$ por el coste computacional ya mencionado y por buscar una buena generalización. Una transformación polinómica de mayor grado no sería abordable en nuestras máquinas (hicimos la prueba y comprobamos que, efectivamente, no era abordable en un tiempo razonable) \footnote{Ver en \emph{\ref{apendice}. \nameref{apendice}} las características de la máquina que se ha usado para la ejecución} y podría llegar a dar problemas de generalización.
 
 La transformación consiste en considerar los monomios en varias variables de hasta grado 2. Por ejemplo, $x_1 x_2, x_1, x_1^2, \ldots$
 
@@ -445,7 +445,7 @@ $$d = {1+2n}+{{n(n-1)}\over{2}} = {1+2*31}+{{31*30}\over{2}} = 528$$
 
 donde $n$ es el tamaño de nuestro conjunto de entrenamiento.
 
-Ahora, tenemos varianzas y rangos de las variables dispares. Esto es claro porque estamos considerando transformaciones no lineales que no van a respetar las escalas similares de nuestros datos, ni la distribución centrada en cero. Por tanto es necesario aplicar de nuevo estandarización al nuevo conjunto de entrenamiento. El efecto es el mismo que el comentado en la \emph{Tabla \ref{tabla_std}. \nameref{tabla_std}}, y por tanto no mostramos esta tabla ya que no va a aportar información nueva.
+Ahora, tenemos varianzas y rangos dispares de las variables. Esto es claro porque estamos considerando transformaciones no lineales que no van a respetar las escalas similares de nuestros datos, ni la distribución centrada en cero. Por tanto es necesario aplicar de nuevo estandarización al nuevo conjunto de entrenamiento. El efecto es el mismo que el comentado en la \emph{Tabla \ref{tabla_std}. \nameref{tabla_std}}, y por tanto no mostramos esta tabla ya que no va a aportar información nueva.
 
 \pagebreak
 
@@ -453,7 +453,7 @@ Ahora, tenemos varianzas y rangos de las variables dispares. Esto es claro porqu
 
 Vamos a emplear la técnica \emph{k-fold Cross Validation} para elegir la mejor hipótesis entre distintas clases de funciones. Además, usaremos esta técnica para decidir si usamos el conjunto original de los datos a los que solo aplicamos estandarización, o si bien usamos el conjunto al que aplicamos \emph{PCA} y polinomios de grado dos.
 
-En todos los modelos que consideramos, consideramos como métrica de evaluación el error cuadrático medio. En regresión hemos visto pocas alternativas, algunas como el error absoluto medio o el coeficiente R2. Sin embargo, consideramos el error cuadrático medio pues todos los modelos considerados usan esta métrica como métrica de error a minimizar, y es una métrica fácilmente interpretable.
+En todos los modelos candidatos, consideramos como métrica de evaluación el error cuadrático medio. En regresión hemos visto pocas alternativas, algunas como el error absoluto medio o el coeficiente $R^2$. Sin embargo, consideramos el error cuadrático medio pues todos los modelos usan esta métrica como métrica de error a minimizar, y es una métrica fácilmente interpretable.
 
 Además, como ya se ha comentado, la distribución de los datos de salida hace que sea más deseable esta métrica de error, para evitar que el modelo tienda a predecir constantemente valores bajos.
 
@@ -463,9 +463,9 @@ Además, como ya se ha comentado, la distribución de los datos de salida hace q
 
 Para los modelos lineales vamos a considerar el ajuste de un hiperplano usando dos tipos de regularización: Ridge y Lasso.
 
-El interés de estos modelos lineales es que suponen usar modelos de baja complejidad, que probablemente no tengan apenas problemas de generalización, y que a pesar de su sencillez funcionan bien en muchos casos.
+El interés de estos modelos lineales es su baja complejidad y que probablemente no tengan apenas problemas de generalización. Además, a pesar de su sencillez, funcionan bien en muchos casos.
 
-Podríamos haber fijado un tipo de regularización en base al problema con el que estamos tratando. Sin embargo, como estamos comparando dos conjuntos de datos distintos, probamos con los dos regularizadores. En el modelo al que aplicamos \emph{PCA} y las transformaciones polinómicas nos decantamos por emplear \emph{Lasso}, pues fuerza a que algunas componentes sean cero, y esto es interesante para anular términos de la transformación polinómica que no sean interesantes. En el conjunto de datos original, tenemos 52 características para un total de 32839 ejemplos de entrenamiento. Usando la regla práctica vista en teoría $N >> d_{VC} * 10$, y teniendo en cuenta que en el caso de 52 variables y que estamos considerando modelos lineales, se verifica con mucho margen que $32839 >> 10 * 53$. Es por esto que probamos con Ridge, no tenemos la necesidad a priori de ignorar algunas características.
+Podríamos haber fijado un tipo de regularización en base al problema con el que estamos tratando. Sin embargo, como estamos comparando dos conjuntos de datos distintos, probamos con los dos regularizadores. En el modelo al que aplicamos \emph{PCA} y las transformaciones polinómicas pensamos que va a ser más adecuado emplear \emph{Lasso}, pues fuerza a que algunas componentes sean cero, y esto es interesante para anular términos de la transformación polinómica que no sean relevantes. En el conjunto de datos original, tenemos 52 características para un total de 32839 ejemplos de entrenamiento. Usando la regla práctica vista en teoría $N >> d_{VC} * 10$, teniendo en cuenta que usamos 52 variables en modelos lineales, se verifica con mucho margen que $32839 >> 10 * 53$. Es por esto que en este caso nos decantaríamos por Ridge, ya que no tenemos la necesidad a priori de ignorar algunas características.
 
 Para Ridge usamos el clasificador \lstinline{Ridge} y para Lasso el clasificador \lstinline{Lasso}, ambos de la librería \lstinline{sklearn}. Los parámetros prefijados son:
 
@@ -495,16 +495,16 @@ Hacemos uso del clasificador \lstinline{MLPRegressor} de \emph{sklearn}. Los par
   \item \textbf{Tolerancia}: $10^-4$
   \item \textbf{Máximo de iteraciones}: 200
   \item Usamos \textbf{\emph{Early Stopping}} como medida de regularización
-  \item \textbf{Función de activación}: ReLU $f(x) := \max{0,x}$
+  \item \textbf{Función de activación}: ReLU $f(x) := \max\{0,x\}$
 \end{itemize}
 
-No consideramos la función de activación $tanh$ porque esta es más adecuada para problemas de clasificación. Usamos la función \emph{Rectified Linear Activation Unit} en vez de la función sigmoide porque son menos fáciles de saturar en el entrenamiento, implican cómputos más sencillos y no sufren del problema del desvanecimiento del gradiente \cite{relu:online}.
+No consideramos la función de activación $tanh$ porque esta es más adecuada para problemas de clasificación. Usamos la función \emph{Rectified Linear Activation Unit} en vez de la función sigmoide porque son más difíciles de saturar en el entrenamiento, implican cómputos más sencillos y no sufren del problema del desvanecimiento del gradiente \cite{relu:online}.
 
 Además, usamos como algoritmo de aprendizaje \emph{Adam}. Es una extensión del algoritmo \emph{SGD}.
 
 En \emph{SGD} mantenemos un \emph{learning rate} fijo durante todo el entrenamiento. En \emph{Adam} se usa el primer y segundo momento del gradiente para variar el \emph{learning rate}, usando una media exponencial sobre estos dos elementos en la que se pueden fijar los parámetros para controlar el decaimiento \cite{adam:online}.
 
-Como ventajas que nos llevan a emplear este algoritmo, podemos citar que es computacionalmente eficiente, apropiado para problemas con muchos datos o altas dimensionalidades, poco afectado por gradientes dispersos o con mucho ruido. Su eficacia ha sido probada en distintos casos de uso reales.
+Como ventajas que nos llevan a emplear este algoritmo, podemos citar que es computacionalmente eficiente, apropiado para problemas con muchos datos o altas dimensionalidades, robusto frente a gradientes dispersos o con mucho ruido. Su eficacia ha sido probada en distintos casos de uso reales.
 
 Los parámetros que probamos con \emph{Cross Validation} son:
 
@@ -518,9 +518,9 @@ Por tanto, estamos usando regularización \emph{Ridge} y \emph{early stopping} c
 
 \subsubsection{Random Forest} \label{random_forest}
 
-Hacemos uso del clasificador \lstinline{RandomForestRegressor} de \emph{sklearn}. De nuevo, este modelo tiene mucha capacidad de sobreajuste, y por tanto, será necesario establecer medidas de regularización para evitar que esto pase.
+Hacemos uso del regresor \lstinline{RandomForestRegressor} de \emph{sklearn}. De nuevo, este modelo tiene mucha capacidad de sobreajuste, y por tanto, será necesario establecer medidas de regularización para evitar que esto pase.
 
-Este modelo, gracias al empleo de \emph{Bagging} y que se usan árboles no correlados, es muy robusto y eficiente.
+Este modelo, gracias al empleo de \emph{Bagging} y el uso de árboles no correlados, es muy robusto y eficiente.
 
 Los parámetros prefijados son:
 
@@ -538,9 +538,9 @@ Los parámetros que probamos con \emph{Cross Validation} son:
   \item Número mínimo de muestras necesarias por cada \textbf{nodo hoja}: 2 y 3
 \end{itemize}
 
-Usamos la profundidad máxima del árbol y el número mínimo de ejemplos en las hojas como medida de regularización. A menor profundidad mayor intensidad de regularización. Y a mayor número mínimo de ejemplos en las hojas mayor intensidad de regularización. Con estas dos medidas buscamos evitar que el modelo fácilmente sobreajuste los datos.
+Usamos la profundidad máxima del árbol y el número mínimo de ejemplos en las hojas como medida de regularización. A menor profundidad mayor intensidad de regularización. Y a mayor número mínimo de ejemplos en las hojas mayor intensidad de regularización. Con estas dos medidas buscamos evitar que el modelo sobreajuste fácilmente los datos.
 
-Como el algoritmo de aprendizaje se usa el algoritmo \emph{greedy} que se ha explicado en las transparencias de teoría aplicado a cada uno de los $n$ árboles.
+Como el algoritmo de aprendizaje usa el algoritmo \emph{greedy} que se ha explicado en las transparencias de teoría aplicado a cada uno de los $n$ árboles.
 
 \subsection{Resultados de \emph{Cross Validation}} \label{cross_validation}
 
@@ -548,11 +548,11 @@ El código que lanza \emph{Cross validation} se encuentra en la función \lstinl
 
 Esta función hace uso de \emph{GridSearchCV} de \emph{sklearn}. Mediante el uso del parámetro \lstinline{scoring} indicamos que queremos usar el error cuadrático medio cambiado de signo como error de validación.
 
-\lstinline{sklearn} devuelve las métricas de error en negativo. Estas métricas de error se usan en otros módulos de \lstinline{sklearn} donde se busca resolver un problema de maximización. Como se busca minimizar el error, se cambia el signo a este para pasar a un problema de maximización.
+\lstinline{sklearn} devuelve las métricas de error en negativo. Estas métricas de error se usan en otros módulos de \lstinline{sklearn} donde se busca resolver un problema de maximización. Como se busca minimizar el error, se cambia el signo a éste para pasar a un problema de maximización.
 
 Esta función está comentada en el código, pues supone un tiempo demasiado largo de cómputo. En nuestra máquina tarda aproximadamente 4 horas \footnote{Ver en \emph{\ref{apendice}. \nameref{apendice}} las características de la máquina que se ha usado para la ejecución}, mientras que en \emph{Google Colab}, usando el plan gratuito, tarda una hora y media aproximadamente.
 
-Los resultados obtenidos se muestran en las siguientes tablas:
+Los resultados obtenidos se muestran en las siguientes tablas, donde se resaltan los mejores resultados:
 
 \subsubsection{Resultados sobre el conjunto de datos sin aplicar PCA}
 
@@ -638,7 +638,7 @@ Los resultados obtenidos se muestran en las siguientes tablas:
   \caption{Mejores resultados}
 \end{table}
 
-A vista de estos resultados, vemos que en el conjunto de entrenamiento sin aplicar \emph{PCA}, el mejor algoritmo ha sido \emph{Random Forest} con sus mejores parámetros. Sin embargo, los mejores parámetros para \emph{Ridge} logran un modelo más estable que \emph{Random Forest}, como muestra la desviación típica del \emph{MSE} entre los 10 \emph{folds} empleados.
+A vista de estos resultados, vemos que en el conjunto de entrenamiento sin aplicar \emph{PCA}, el mejor algoritmo ha sido \emph{Random Forest} con sus mejores parámetros. Sin embargo, los mejores parámetros para \emph{Ridge} logran un modelo más estable que \emph{Random Forest}, como muestra la desviación típica del \emph{MSE} de los 10 \emph{folds} empleados.
 
 Además, se confirma nuestra hipótesis de que, en este \emph{dataset} con pocas columnas, iba a funcionar mejor el regularizador \emph{Ridge}.
 
@@ -725,6 +725,10 @@ Además, se confirma nuestra hipótesis de que, en este \emph{dataset} con pocas
   \caption{Mejores resultados}
 \end{table}
 
+El mejor modelo en este conjunto de datos no mejora al mejor modelo en el conjunto de datos sin \emph{PCA} y transformaciones polinómicas. Por tanto descartamos este conjunto de datos.
+
+Además, se vuelve a cumplir nuestra predicción, el mejor regularizador es \emph{Lasso} por los motivos que ya hemos comentado.
+
 \pagebreak
 
 \section{Selección del modelo final}
@@ -734,6 +738,8 @@ Además, se confirma nuestra hipótesis de que, en este \emph{dataset} con pocas
 Tras haber aplicado \emph{Cross Validation}, obtenemos que el modelo óptimo es \emph{Random Forest} con parámetros:
 
 \begin{itemize}
+  \item Criterio de evaluación: MSE
+  \item Máximo de características: fijamos el número de características usadas para la elección del mejor split a la raíz cuadrada del número total de características.
   \item Profundidad: 10
   \item Número mínimo de ejemplos en las hojas: 2
   \item Número de árboles estimadores: 90
@@ -757,8 +763,6 @@ Una vez entrenado sobre todo el conjunto de entrenamiento, mostramos los resulta
     \caption{Resultados tras el entrenamiento sobre todo el conjunto de datos}
 \end{table}
 
-La fila \emph{Dummy} se refiere a un regresor que siempre devuelve la media (con la clase de \lstinline{sklearn} \lstinline{DummyRegressor(strategy="mean")}), evaluado sobre el conjunto de test.
-
 La curva de aprendizaje obtenida es la siguiente:
 
 \begin{figure}[H]
@@ -773,12 +777,12 @@ En el conjunto de entrenamiento hemos obtenido buenos resultados. Esto no nos so
 
 El error cuadrático medio en el conjunto de \emph{test} ha sido 4.12 veces mayor que en \emph{training}, mientras que en el error absoluto medio ha sido 1.79 veces mayor. El valor de $R^2$ en testing es de 0.55, lo cual indica unos resultados mediocres. Estamos explicando poco más de la mitad de la varianza en test con nuestro modelo.
 
-A la vista de estos resultados, nos preguntamos si hemos tenido problemas de generalización a pesar de haber empleado un par de parámetros para regularizar. Se puede dar perfectamente el caso de que el modelo esté generalizando muy mal, o también de que el conjunto de \emph{test} sea complicado y cualquier modelo o medida de regularización provoque resultados peores a los que estamos obteniendo en test. Es por esto que vamos a emplear una serie de modelos como \emph{baselines} con los que comparar. Además, tenemos la sospecha de que esto pueda pasar por lo comentado en \emph{\ref{boxplot}. \nameref{boxplot}}.
+A la vista de estos resultados, nos preguntamos si hemos tenido problemas de generalización a pesar de haber empleado un par de parámetros para regularizar. Se puede dar perfectamente el caso de que el modelo esté generalizando muy mal, o también que el conjunto de \emph{test} sea complicado y cualquier modelo o medida de regularización provoque resultados peores a los que estamos obteniendo en test. Es por esto que vamos a emplear una serie de modelos como \emph{baselines} con los que comparar. Además, tenemos la sospecha de que esto pueda pasar por lo comentado en \emph{\ref{boxplot}. \nameref{boxplot}}.
 
 Como \emph{baselines} vamos a emplear los siguientes modelos:
 
 \begin{itemize}
-    \item El segundo mejor modelo en el conjunto de datos al que solo aplicas borrado de \emph{outliers} (para poder realizar comparaciones justas que no dependan del conjunto de datos)
+    \item El segundo mejor modelo en el conjunto de datos al que solo aplicamos borrado de \emph{outliers} (para poder realizar comparaciones justas que no dependan del conjunto de datos)
     \item Un regresor que siempre devuelve la media, usando \lstinline{DummyRegressor} de \lstinline{sklearn}
     \item Un regresor que siempre devuelve el valor cero, usando \lstinline{DummyRegressor}
 \end{itemize}
@@ -821,7 +825,7 @@ La curva de aprendizaje del \emph{baseline} \emph{MLP} se muestra en la siguient
 
 En este caso, vemos como el modelo \emph{baseline} no está teniendo capacidad alguna de aprender la función objetivo.
 
-Ahora, con la función \lstinline{where_did_the_model_failed} miramos los puntos en los que tenemos mayor error de salida, para tener una intuición de dónde falla más nuestro modelo. Nos interesa saber los valores de salida en los que más fallamos y el valor predicho para estos puntos. Las peores 25 etiquetas reales son: 1147,  896,  918,  704,  695,  507,  580,  564,  441,  434,  454,  455,  320,  409,   369,  527,  431,  284,  217,  338,   40,  229,  300,  306 y 253.
+Ahora, con la función \lstinline{where_did_the_model_fail} miramos los puntos en los que tenemos mayor error de salida, para tener una intuición de dónde falla más nuestro modelo. Nos interesa saber los valores de salida en los que mayor error cometemos y el valor predicho para estos puntos. Las etiquetas de los 25 peores puntos son: 1147,  896,  918,  704,  695,  507,  580,  564,  441,  434,  454,  455,  320,  409,   369,  527,  431,  284,  217,  338,   40,  229,  300,  306 y 253.
 
 Ahora, mostramos un gráfico en el que en el eje $X$ mostramos el valor real de la etiqueta, y en el eje $Y$ mostramos el valor que nuestro modelo predice:
 
@@ -831,11 +835,11 @@ Ahora, mostramos un gráfico en el que en el eje $X$ mostramos el valor real de 
     \caption{Peores predicciones de nuestro modelo}
 \end{figure}
 
-Como podíamos suponer, como nuestra muestra de datos está muy concentrada en valores cercanos a cero de comentarios, la mayor parte de los ejemplos mal clasificados son aquellos con un número alto de comentarios (aquellos con más de 200 comentarios, cuando consideramos los 25 peores puntos). Esto podría mitigarse con el uso de un \emph{dataset} que tuviese más ejemplos de \emph{posts} con un número alto de comentarios.
+Como podíamos suponer, como nuestra muestra de datos está muy concentrada en valores cercanos a cero de comentarios, la mayor parte de los ejemplos mal clasificados son aquellos con un número alto de comentarios (aquellos con más de 200 comentarios, cuando consideramos los 25 peores puntos), pues no disponemos de tantos ejemplos de entrenamiento. Esto podría mitigarse con el uso de un \emph{dataset} que tuviese más ejemplos de \emph{posts} con un número alto de comentarios.
 
-Es significativo el punto con comentarios reales cercanos a cero que ha sido predicho con algo más de doscientos comentarios. Del mismo modo comentarios por encima de 800 comentarios se predicen a valores por debajo de 350 comentarios. Por tanto, nuestro modelo trabaja mal con valores extremadamente altos (por encima de 200 comentarios) tendiendo sus predicciones hacia valores más medios.
+Es significativo el punto con comentarios reales cercanos a cero que ha sido predicho con algo más de doscientos comentarios. Del mismo modo, datos con un valor de comentarios por encima de 800 se predicen a valores por debajo de 350. Por tanto, nuestro modelo trabaja mal con valores extremadamente altos (por encima de 200 comentarios) tendiendo sus predicciones hacia valores más medios.
 
-\textbf{En conclusión}, hemos encontrado un modelo robusto que ha funcionado bien teniendo en cuenta las particularidades y complicaciones que presentaba nuestro \emph{dataset}. Como mejoras al trabajo presentado podrían realizarse un procedimiento similar usando un \emph{dataset} con más representación de \emph{post} con muchos comentarios. También podría haberse presentado alguna técnica para sobrellevar este problema de representatividad, como \emph{data augmentation}, aunque no tenemos conocimiento de cómo aplicarla de forma eficiente y correcta.
+\textbf{En conclusión}, hemos encontrado un modelo robusto que ha funcionado bien teniendo en cuenta las particularidades y complicaciones que presentaba nuestro \emph{dataset}. Como mejora al trabajo presentado podría realizarse un procedimiento similar usando un \emph{dataset} con más representación de \emph{post} con muchos comentarios. También podría haberse presentado alguna técnica para sobrellevar este problema de representatividad, como \emph{data augmentation}, aunque no tenemos conocimiento de cómo aplicarla de forma eficiente y correcta.
 
 \pagebreak
 \section{Apéndice} \label{apendice}
