@@ -424,6 +424,46 @@ def learning_curve(model, df_train_x, df_train_y, df_test_x, df_test_y, number_o
     plt.show()
     wait_for_user_input()
 
+def where_did_the_model_failed(model, df_x, df_y):
+    """Mostramos los puntos en los que mas ha fallado el modelo"""
+
+    # Realizamos esta conversion por seguridad
+    try:
+        df_x = df_x.to_numpy()
+    except:
+        pass
+    try:
+        df_y = df_y.to_numpy()
+    except:
+        pass
+
+    # Realizamos las predicciones
+    predictions = model.predict(df_x)
+
+    # Calculamos el error cometido
+    diff = df_y - predictions
+    error_vector = diff ** 2
+
+    # Ordenamos los errores obtenidos de mayor a menor
+    indixes = np.argsort(error_vector)
+
+    # Nos quedamos con los primeros 100 elementos donde fallamos mas
+    worst_indixes = [indixes[-i] for i in range(1, 25 + 1)]
+
+    worst_elements = df_y[np.array(worst_indixes)]
+    worst_predictions = predictions[np.array(worst_indixes)]
+    print("Los peores elementos son:")
+    print(worst_elements)
+    wait_for_user_input()
+
+    plt.title("Peores valores de salida predichos")
+    plt.scatter(worst_elements, worst_predictions)
+    plt.xlabel("Peores etiquetas reales")
+    plt.ylabel("Peores etiquetas predichas")
+    plt.show()
+    wait_for_user_input()
+
+
 # Funcion principal
 #===============================================================================
 if __name__ == "__main__":
@@ -495,7 +535,11 @@ if __name__ == "__main__":
     show_results(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
 
     print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
-    learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
+    # TODO -- descomentar
+    #  learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
+
+    print(f"--> Mostrando donde ha fallado nuestro modelo")
+    where_did_the_model_failed(model, df_test_original_x ,df_test_y)
 
     print("==> Entrenando sobre todo el conjunto de datos con el baseline MLP")
     baseline = MLPRegressor(alpha = 1, hidden_layer_sizes = [(100)], activation = "relu", tol = 1e-4, solver="adam", learning_rate_init = 0.001, early_stopping = True)
@@ -506,6 +550,3 @@ if __name__ == "__main__":
 
     print(f"--> Mostrando la curva de aprendizaje del entrenamiento del baseline")
     learning_curve(baseline, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
-
-
-
