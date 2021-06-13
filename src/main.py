@@ -40,11 +40,11 @@ def load_data():
         https://stackoverflow.com/questions/20906474/import-multiple-csv-files-into-pandas-and-concatenate-into-one-dataframe
     """
     data_files = [
-        # TODO -- descomentar esto para cuando no estemos usando google drive
         "./datos/Training/Features_Variant_1.csv",
         "./datos/Testing/TestSet/Test_Case_1.csv",
 
-        # TODO -- version google drive
+        # Estos path se usan cuando estamos ejecutando el codigo en Google Drive
+        # Son los mismos archivos que los especificados arriba
         #"/content/drive/MyDrive/ml/datos/Training/Features_Variant_1.csv",
         #"/content/drive/MyDrive/ml/datos/Testing/TestSet/Test_Case_1.csv",
     ]
@@ -117,17 +117,16 @@ def standarize_dataset(train_df, test_df):
     Si no queremos standarizar las columnas de salida, separar antes los dataframes y pasar solo
     la matriz de datos de entrada!!
 
-    TODO --> Cambiar la documentacion porque ya no usamos dataframes
     Parameters:
     ===========
-    train_df: dataframe de datos de entrenamiento, de los que se calculan los estadisticos para la
+    train_df: datos de entrenamiento, de los que se calculan los estadisticos para la
               transformacion
-    test_df: dataframe de datos de test. No se toma informacion de esta muestra para calcular la
+    test_df: datos de test. No se toma informacion de esta muestra para calcular la
              trasnformacion
     Returns:
     ========
-    standarized_train: dataframe con los datos de entrenamiento estandarizados
-    standarized_test: dataframe con los datos de test estandarizados con la misma transformacion
+    standarized_train: datos de entrenamiento estandarizados
+    standarized_test: datos de test estandarizados con la misma transformacion
                      calculada a partir de los datos de entrenamiento
     """
 
@@ -139,7 +138,6 @@ def standarize_dataset(train_df, test_df):
 
 def remove_outliers(df_train_x, df_train_y):
     """Elimina los outliers del dataset
-    TODO -- comentar
     """
 
     df_train_x = df_train_x.to_numpy()
@@ -297,7 +295,6 @@ def cross_validation_random_forest(df_train_X, df_train_Y):
     # Espacio de busqueda
     parameters = {
         # Numero de arboles
-        # TODO -- probar a poner ccp alpha a ver si cambia algo
         'n_estimators': np.array([90, 95, 100, 120]),
         'max_depth': np.array([5, 10]),
         'min_samples_leaf': np.array([2, 3])
@@ -317,14 +314,9 @@ def cross_validation_mlp(df_train_X, df_train_Y):
     kf = KFold(n_splits=folds, shuffle = True)
 
     # Modelo que vamos a considerar
-    # TODO -- explicar en la memoria lo que es adam y justificar por que lo estamos usando
-    # TODO -- poner el parametro max_iter
-    # TODO -- comentar que max_iter == 200
-    # TODO -- usar early stopping para que tarde menos
     mlp = MLPRegressor(tol = tol, solver="adam", learning_rate_init = 0.001, early_stopping = True)
 
     # Espacio de busqueda
-    # TODO -- MEMORIA -- tanh es usada principalmente para problemas de clasificacion
     parameters = {
         'alpha': [10**x for x in [-2, -1, 0]],
         'activation': ['relu'],
@@ -337,7 +329,7 @@ def cross_validation_mlp(df_train_X, df_train_Y):
     human_readable_results(results, title="MLP")
 
 def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
-    """TODO -- documentar este codigo"""
+    """Mostramos los resultados del entrenamiento de un modelo"""
     # Modelo Dummy con constante 0 para usarlo como baseline
     dummy = DummyRegressor(strategy="constant", constant=0)
     dummy.fit(df_train_x, df_train_y)
@@ -392,7 +384,7 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     wait_for_user_input()
 
 def learning_curve(model, df_train_x, df_train_y, df_test_x, df_test_y, number_of_splits = 10):
-    """TODO -- documentar
+    """
     Codigo inspirado de: https://github.com/rasbt/mlxtend/blob/master/mlxtend/plotting/learning_curves.py
     """
 
@@ -492,7 +484,7 @@ if __name__ == "__main__":
     # Para saber cuantas filas estamos borrando
     prev_len = len(df_train_x)
 
-    # TODO -- no se deberia llamar df_train porque ahora no usamos pd.df
+    # Eliminamos los outliers
     df_train_x, df_train_y = remove_outliers(df_train_x, df_train_y)
 
     print(f"Tamaño tras la limpieza de outliers del train_set: {len(df_train_x)}")
@@ -535,8 +527,7 @@ if __name__ == "__main__":
     show_results(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
 
     print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
-    # TODO -- descomentar
-    #  learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
+    learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
 
     print(f"--> Mostrando donde ha fallado nuestro modelo")
     where_did_the_model_failed(model, df_test_original_x ,df_test_y)

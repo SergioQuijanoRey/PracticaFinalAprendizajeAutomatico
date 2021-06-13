@@ -92,9 +92,6 @@
 % Para mostrar las matrices
 \usepackage{amsmath}
 
-% TODOS:
-% [ ] Comentar que solo nos hemos quedado con un conjunto de datos variant1 ??
-
 % Metadatos del documento
 %===================================================================================================
 \title{
@@ -171,7 +168,6 @@ Existen cuatro características referentes a las páginas:
 \begin{itemize}
   \item \textbf{Likes de la página}: describe el apoyo de los usuarios hacia ciertos elementos de dicha página, como comentarios, imágenes, estados, posts\ldots
 
-% TODO -- Esto mejorar
   \item \textbf{Categoría de la página}: define el tipo de entidad o persona sobre la que trata la información tratada en dicha página. El dataset contiene un archivo donde se definen todos los tipos posibles de categorías, como por ejemplo: comercio local, marca comercial, producto, artista, entretenimiento, \ldots
 
   \item \textbf{\emph{Checkin} de la página}: comprobaciones de actos de presencia en un determinado lugar (sólo es válido para páginas institucionales)
@@ -183,7 +179,6 @@ Existen cuatro características referentes a las páginas:
 
 En este subgrupo se incluye el comportamiento de los comentarios en el post en distintos intervalos de tiempo respecto a distintas métricas. Se dividen en cinco secciones que dependen de una referencia temporal fijada. El autor fija esta referencia en 72h después de la publicación del \emph{post}.
 
-% TODO -- si da tiempo, hacerlo en una tabla que queda mas profesional
 \begin{itemize}
   \item \textbf{C1}: número total de comentarios durante las 72 horas previas a la referencia
 
@@ -380,10 +375,8 @@ Nuestro proceso de estandarización en principio solo se preocupa de conseguir m
 
 Para el análisis de componentes principales hacemos uso de la función \lstinline{apply_PCA}. Queremos que tras la transformación de nuestro espacio obtengamos el $99\%$ de la varianza de nuestro \emph{dataset} original. Por tanto, pasaremos a la función \lstinline{PCA} de \emph{sklearn} el parámetro \lstinline{n_components} igualado a $0.99$, lo que fuerza a que seleccione el número de componentes principales necesarias para explicar el $99\%$ o más de nuestra varianza.
 
-% TODO -- explica mejor esto chiquilla
 Vamos a observar en la siguiente tabla el número de componentes que obtenemos con el $99\%$ de la varianza y la varianza explicada en cada una de ellas. El método de \emph{PCA} devuelve las componentes ordenadas de mayor varianza explicada a menor.
 
-% TODO -- poner solo 3 cifras decimales que Nicolas lo penaliza
 \begin{table}[!htb]
   \begin{tabular}{|c|c|}
     \hline
@@ -438,15 +431,12 @@ Tras aplicar \emph{PCA}, las variables vuelven a estar en rangos dispares. Sin e
 
 \subsection{Transformación polinómica}
 
-% TODO -- hablar de d_vc
-
 Al haber reducido la dimensionalidad de nuestro espacio, el tamaño de nuestro \emph{dataset} permite realizar una transformación cuadrática de nuestros datos sin que el coste computacional sea excesivo, y sin que tengamos problemas de generalización.
 
 Hemos considerado esta transformación pues no disponemos de conocimiento experto del problema para decidir en base a ello una tal transformación. Tampoco en el \emph{paper} original \cite{original_paper:paper} se presenta una transformación en base a conocimiento experto.
 
 Por tanto, consideramos una transformación polinómica $\phi_q$ de grado $q$ fijado, pues pueden dar buenos resultados sin mucha información a priori. Fijamos $q=2$ por el coste computacional ya mencionado y por buscar una buena generalización. Una transformación polinómica de mayor grado no sería abordable en nuestras máquinas (hicimos la prueba y comprobamos que, efectivamente, no era abordable en un tiempo razonable) y podría llegar a dar problemas de generalización.
 
-% TODO - la frase de los monomios es que la dices mejor y me he enterado regular
 La transformación consiste en considerar los monomios en varias variables de hasta grado 2. Por ejemplo, $x_1 x_2, x_1, x_1^2, \ldots$
 
 La dimensión de nuestro espacio transformado es entonces
@@ -503,6 +493,7 @@ Hacemos uso del clasificador \lstinline{MLPRegressor} de \emph{sklearn}. Los par
   \item \textbf{Resolutor}: Adam
   \item \textbf{Tasa de aprendizaje}: 0.001
   \item \textbf{Tolerancia}: $10^-4$
+  \item \textbf{Máximo de iteraciones}: 200
   \item Usamos \textbf{\emph{Early Stopping}} como medida de regularización
   \item \textbf{Función de activación}: ReLU $f(x) := \max{0,x}$
 \end{itemize}
@@ -565,7 +556,6 @@ Los resultados obtenidos se muestran en las siguientes tablas:
 
 \subsubsection{Resultados sobre el conjunto de datos sin aplicar PCA}
 
-% TODO -- Sin PCA
 \begin{table}[H]
   \centering
   \begin{tabular}{|c|c|c|c|}

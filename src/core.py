@@ -1,8 +1,7 @@
 import pandas as pd
 
 # Parametros globales de core.py
-# TODO -- poner a True
-WAIT = False
+WAIT = True
 
 def calculate_stats(df):
     """
@@ -20,8 +19,6 @@ def calculate_stats(df):
     stats["mean"] = df.mean()
     stats["median"] = df.median()
 
-    # TODO -- borrar este codigo comentado
-    #stats["var"] = df.var()
     stats["std"] = df.std()
     stats["min"] = df.min()
     stats["max"] = df.max()
