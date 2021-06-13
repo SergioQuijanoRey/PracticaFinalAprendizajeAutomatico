@@ -341,7 +341,7 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     # Modelo Dummy con constante 0 para usarlo como baseline
     dummy = DummyRegressor(strategy="constant", constant=0)
     dummy.fit(df_train_x, df_train_y)
-    
+
     # Modelo Dummy con constante la media para usarlo como baseline
     dummy_mean = DummyRegressor(strategy="mean")
     dummy_mean.fit(df_train_x, df_train_y)
@@ -350,7 +350,7 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     train_predictions = model.predict(df_train_x)
     test_predictions = model.predict(df_test_x)
     dummy_predictions = dummy.predict(df_test_x)
-    dummy_mean_predictions = dummy_mean.predict(df_text_x)
+    dummy_mean_predictions = dummy_mean.predict(df_test_x)
 
     train_r2 = r2_score(df_train_y, train_predictions)
     train_mse = mean_squared_error(df_train_y, train_predictions)
@@ -363,7 +363,7 @@ def show_results(model, df_train_x, df_train_y, df_test_x, df_test_y):
     dummy_r2 = r2_score(df_test_y, dummy_predictions)
     dummy_mse = mean_squared_error(df_test_y, dummy_predictions)
     dummy_mae = mean_absolute_error(df_test_y, dummy_predictions)
-    
+
     dummy_mean_r2 = r2_score(df_test_y, dummy_mean_predictions)
     dummy_mean_mse = mean_squared_error(df_test_y, dummy_mean_predictions)
     dummy_mean_mae = mean_absolute_error(df_test_y, dummy_mean_predictions)
@@ -487,10 +487,6 @@ if __name__ == "__main__":
     #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
 
     print("==> Entrenando sobre todo el conjunto de datos sin PCA")
-<<<<<<< HEAD
-
-=======
->>>>>>> 1df9d650428929f8d2c74259d3a91eb79fbbcbb6
     model = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", max_depth = 10, min_samples_leaf = 2, n_estimators = 90, n_jobs = n_jobs)
     print(f"--> Entrenando sobre todo el conjunto de datos con el modelo final")
     model.fit(df_train_original_x, df_train_y)
@@ -504,10 +500,10 @@ if __name__ == "__main__":
     print("==> Entrenando sobre todo el conjunto de datos con el baseline MLP")
     baseline = MLPRegressor(alpha = 1, hidden_layer_sizes = [(100)], activation = "relu", tol = 1e-4, solver="adam", learning_rate_init = 0.001, early_stopping = True)
     baseline.fit(df_train_original_x, df_train_y)
-    
+
     print(f"--> Modelo entrenado, mostrando resultados")
     show_results(baseline, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
-    
+
     print(f"--> Mostrando la curva de aprendizaje del entrenamiento del baseline")
     learning_curve(baseline, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
 
