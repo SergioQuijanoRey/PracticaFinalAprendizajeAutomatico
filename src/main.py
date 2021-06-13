@@ -65,7 +65,7 @@ def split_train_test(df):
 
 # Exploracion de los datos
 #===============================================================================
-def explore_training_set(df):
+def explore_training_set(df, show_plot = False):
     """
     Muestra caracteristicas relevantes del dataset de entrenamiento
 
@@ -73,6 +73,7 @@ def explore_training_set(df):
     ===========
     df: dataframe del que queremos realizar la exploracion
         No debe contener datos de test, pues no queremos visualizarlos
+    show_plot: Indica si queremos que se muestren graficos o no
 
     Returns:
     ========
@@ -86,6 +87,26 @@ def explore_training_set(df):
     print_bar()
     print_full(stats)
     wait_for_user_input()
+
+    print("Boxplot de la variable de salida")
+    plot_boxplot(df, title = "Boxplot de la variable de salida", columns = [df.columns[-1]])
+    wait_for_user_input()
+
+def plot_boxplot(df, columns, title):
+    """
+    Hacemos graficos de barras de un dataframe
+    Parameters:
+    ===========
+    df: el dataframe que contiene los datos
+    columns: lista con los nombres de las columnas de las que queremos hacer la grafica
+    title: titulo de la grafica
+    """
+
+    boxplot = df.boxplot(column=columns)
+    plt.title(title)
+    plt.show()
+    wait_for_user_input()
+
 
 def standarize_dataset(train_df, test_df):
     """
@@ -423,7 +444,7 @@ if __name__ == "__main__":
 
     # Exploramos el conjunto de entrenamiento
     print("==> Exploramos el conjunto de entrenamiento")
-    explore_training_set(append_series_to_dataframe(df_train_x, df_train_y))
+    explore_training_set(append_series_to_dataframe(df_train_x, df_train_y), show_plot = True)
 
     # Borramos los outliers
     print("==> Borrando outliers")
@@ -442,10 +463,6 @@ if __name__ == "__main__":
 
     print("==> Estandarizando el dataset")
     df_train_x, df_test_x = standarize_dataset(df_train_x, df_test_x)
-    # TODO -- mostrar en la memoria como queda estandarizado -> Por que?
-    # Porque estandarizando tambien se normalizan los rangos en cierta medida y eso
-    # hay que justificarlo
-    # TODO -- descomentar cuando hagamos la memoria
     print("--> Estadisticas tras la estandarizacion")
     explore_training_set(pd.DataFrame(df_train_x))
 
@@ -470,7 +487,10 @@ if __name__ == "__main__":
     #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
 
     print("==> Entrenando sobre todo el conjunto de datos sin PCA")
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1df9d650428929f8d2c74259d3a91eb79fbbcbb6
     model = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", max_depth = 10, min_samples_leaf = 2, n_estimators = 90, n_jobs = n_jobs)
     print(f"--> Entrenando sobre todo el conjunto de datos con el modelo final")
     model.fit(df_train_original_x, df_train_y)
