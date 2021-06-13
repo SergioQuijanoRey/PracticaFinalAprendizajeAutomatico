@@ -40,13 +40,13 @@ def load_data():
         https://stackoverflow.com/questions/20906474/import-multiple-csv-files-into-pandas-and-concatenate-into-one-dataframe
     """
     data_files = [
-        # TODO -- descomentar esto para cuando no estemos usando google drive
-        #  "./datos/Training/Features_Variant_1.csv",
-        #  "./datos/Testing/TestSet/Test_Case_1.csv",
+        "./datos/Training/Features_Variant_1.csv",
+        "./datos/Testing/TestSet/Test_Case_1.csv",
 
-        # TODO -- version google drive
-        "/content/drive/MyDrive/ml/datos/Training/Features_Variant_1.csv",
-        "/content/drive/MyDrive/ml/datos/Testing/TestSet/Test_Case_1.csv",
+        # Usamos estos archivos cuando trabajamos en Google Colab
+        # Son los mismos archivos pero con la ruta de Google Colab
+        #  "/content/drive/MyDrive/ml/datos/Training/Features_Variant_1.csv",
+        #  "/content/drive/MyDrive/ml/datos/Testing/TestSet/Test_Case_1.csv",
     ]
 
     dfs = (pd.read_csv(data_file, header = None) for data_file in data_files)
@@ -65,7 +65,7 @@ def split_train_test(df):
 
 # Exploracion de los datos
 #===============================================================================
-def explore_training_set(df):
+def explore_training_set(df, show_plot = False):
     """
     Muestra caracteristicas relevantes del dataset de entrenamiento
 
@@ -73,6 +73,7 @@ def explore_training_set(df):
     ===========
     df: dataframe del que queremos realizar la exploracion
         No debe contener datos de test, pues no queremos visualizarlos
+    show_plot: Indica si queremos que se muestren graficos o no
 
     Returns:
     ========
@@ -86,6 +87,26 @@ def explore_training_set(df):
     print_bar()
     print_full(stats)
     wait_for_user_input()
+
+    print("Boxplot de la variable de salida")
+    plot_boxplot(df, title = "Boxplot de la variable de salida", columns = [df.columns[-1]])
+    wait_for_user_input()
+
+def plot_boxplot(df, columns, title):
+    """
+    Hacemos graficos de barras de un dataframe
+    Parameters:
+    ===========
+    df: el dataframe que contiene los datos
+    columns: lista con los nombres de las columnas de las que queremos hacer la grafica
+    title: titulo de la grafica
+    """
+
+    boxplot = df.boxplot(column=columns)
+    plt.title(title)
+    plt.show()
+    wait_for_user_input()
+
 
 def standarize_dataset(train_df, test_df):
     """
@@ -408,7 +429,7 @@ if __name__ == "__main__":
 
     # Exploramos el conjunto de entrenamiento
     print("==> Exploramos el conjunto de entrenamiento")
-    explore_training_set(append_series_to_dataframe(df_train_x, df_train_y))
+    explore_training_set(append_series_to_dataframe(df_train_x, df_train_y), show_plot = True)
 
     # Borramos los outliers
     print("==> Borrando outliers")
@@ -427,10 +448,6 @@ if __name__ == "__main__":
 
     print("==> Estandarizando el dataset")
     df_train_x, df_test_x = standarize_dataset(df_train_x, df_test_x)
-    # TODO -- mostrar en la memoria como queda estandarizado -> Por que?
-    # Porque estandarizando tambien se normalizan los rangos en cierta medida y eso
-    # hay que justificarlo
-    # TODO -- descomentar cuando hagamos la memoria
     print("--> Estadisticas tras la estandarizacion")
     explore_training_set(pd.DataFrame(df_train_x))
 
@@ -455,21 +472,26 @@ if __name__ == "__main__":
     #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
 
     print("==> Entrenando sobre todo el conjunto de datos sin PCA")
-    # TODO -- descomentar
-    #  model = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", max_depth = 10, min_samples_leaf = 2, n_estimators = 90, n_jobs = n_jobs)
-    #  print(f"--> Entrenando sobre todo el conjunto de datos con el modelo final")
-    #  model.fit(df_train_original_x, df_train_y)
+    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", max_depth = 10, min_samples_leaf = 2, n_estimators = 90, n_jobs = n_jobs)
+    print(f"--> Entrenando sobre todo el conjunto de datos con el modelo final")
+    model.fit(df_train_original_x, df_train_y)
 
-    #  print(f"--> Modelo entrenado, mostrando resultados")
-    #  show_results(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
+    print(f"--> Modelo entrenado, mostrando resultados")
+    show_results(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
 
-    #  print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
-    #  learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
+    print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
+    learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
 
-    print("==> Entrenando sobre todo el conjunto de datos al que hemos aplicado PCA y pol_features")
+    print("==> Entrenando sobre todo el conjunto de datos al que hemos aplicado PCA y pol_features como baseline")
     model = MLPRegressor(alpha = 1, hidden_layer_sizes = [(75)], activation = "relu", tol = 1e-4, solver="adam", learning_rate_init = 0.001, early_stopping = True)
+
+    print("--> Entrenando sobre todo el conjunto de datos")
     model.fit(df_train_x, df_train_y)
+
+    print("--> Resultados del entrenamiento")
     show_results(model, df_train_x, df_train_y, df_test_x, df_test_y)
+
+    print("--> Curva de aprendizaje")
     learning_curve(model, df_train_x, df_train_y, df_test_x, df_test_y, number_of_splits = 10)
 
 

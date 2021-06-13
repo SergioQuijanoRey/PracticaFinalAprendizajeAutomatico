@@ -92,6 +92,9 @@
 % Para mostrar las matrices
 \usepackage{amsmath}
 
+% TODOS:
+% [ ] Comentar que solo nos hemos quedado con un conjunto de datos variant1 ??
+
 % Metadatos del documento
 %===================================================================================================
 \title{
@@ -206,7 +209,7 @@ Se usan 14 características binarias. 7 de ellas para indicar el día de la sema
 
 Incluye 5 características tipo medatadatos del post, como puede ser la longitud del post o el número de veces que se ha compartido.
 
-\subsection{Exploración del \emph{Dataset}} \label{exploracion_datos}
+\subsection{Exploración del \emph{Dataset}} \label{exploracion_datos} \label{boxplot}
 
 Con la función \lstinline{explore_dataset}, mostramos algunas estadísticas de las variables aleatorias que componen las columnas de nuestro conjunto de datos. Notar que en esta exploración ya hemos separado el conjunto de \emph{training} y \emph{testing}, con la función \lstinline{split_train_test} que más adelante, en \emph{\ref{preprocesado}. \nameref{preprocesado}}.
 
@@ -283,10 +286,35 @@ La descripción de las variables se muestra en la siguiente tabla:
 
 En la tabla no hemos mostrado la estadística de \emph{missing values}, pues como ya hemos comentado, no tenemos datos faltantes en este \emph{dataset}. Tampoco mostramos la columna en la que se muestra el tipo, pues todas las variables son o bien flotantes o bien enteras, y por tanto no es necesaria una técnica de codificación de variables categóricas como puede ser \emph{one hot encoding}.
 
-En esta tabla queda clara la necesitada de realizar un proceso de estandarización o bien de normalización. Los modelos que vamos a emplear son muy sensibles a variables en escalas diferentes. Otros directamente se comportam mucho mejor cuando tenemos media cero y desviación típica uno.
+En esta tabla queda clara la necesidad de realizar un proceso de estandarización o bien de normalización. Los modelos que vamos a emplear son muy sensibles a variables en escalas diferentes. Otros directamente se comportam mucho mejor cuando tenemos media cero y desviación típica uno.
 
 Estas escalas diferentes se pueden ver, por ejemplo, con la columna 0 que se mueve en el rango $[36.0, 4.86 * 10^8]$ y que tiene una desviación típica de $7.4 * 10^6$, mientras que la columna 43 se mueve en el rango $[0, 1]$ y tiene una desviación típica de $3.5 * 10$.
 
+En la función \lstinline{explore_dataset} también hacemos un gráfico de cajas y bigotes de la variable de salida, obteniendo la siguiente gráfica:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{boxplot_salida}
+  \caption{Gráfico de cajas y bigotes de la variable de salida}
+\end{figure}
+
+Por la cantida de valores atípicos, no se ve bien que sea una gráfica de cajas y bigotes, así que hacemos \emph{zoom} en la imagen obteniendo la siguiente gráfica:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{boxplot_salida_zoom}
+  \caption{Gráfico de cajas y bigotes de la variable de salida, \textbf{ampliada}}
+\end{figure}
+
+A partir de estas gráficas quedan claros los siguientes hechos:
+
+\begin{itemize}
+  \item Todos los elementos que quedan por debajo del percentil 75 en la variable de salida tienen menos de 10 comentarios. 
+  \item El rango intercuartílico es muy pequeño, por tanto, sabemos que los datos, en su variable de salida, están muy concentrados en un número de comentarios muy bajo
+  \item Tenemos una gran cantidad de valores atípicos en la variable de salida. Atípicos en el sentido de que se alejan del percentil 75 más de 1.5 veces el rango intercuartílico
+\end{itemize}
+
+Por tanto, como se comentará en \emph{\ref{metrica_error}. \nameref{metrica_error}}, es una buena idea escoger como métrica de error para nuestros modelos el error cuadrático medio, pues penaliza más predicciones que se alejen de los valores de etiquetado. Con ello intentamos evitar que los modelos tiendan a predecir constantemente un valor bajo de comentarios, pues la mayoría de los datos están concentrados en este rango de salida.
 \pagebreak
 
 \section{Preprocesamiento de los datos} \label{preprocesado}
@@ -429,11 +457,13 @@ Ahora, tenemos varianzas y rangos de las variables dispares. Esto es claro porqu
 
 \pagebreak
 
-\section{Selección del modelo} \label{seleccion_modelos}
+\section{Selección del modelo} \label{seleccion_modelos} \label{metrica_error}
 
 Vamos a emplear la técnica \emph{k-fold Cross Validation} para elegir la mejor hipótesis entre distintas clases de funciones. Además, usaremos esta técnica para decidir si usamos el conjunto original de los datos a los que solo aplicamos estandarización, o si bien usamos el conjunto al que aplicamos \emph{PCA} y polinomios de grado dos.
 
 En todos los modelos que consideramos, consideramos como métrica de evaluación el error cuadrático medio. En regresión hemos visto pocas alternativas, algunas como el error absoluto medio o el coeficiente R2. Sin embargo, consideramos el error cuadrático medio pues todos los modelos considerados usan esta métrica como métrica de error a minimizar, y es una métrica fácilmente interpretable.
+
+Además, como ya se ha comentado, la distribución de los datos de salida hace que sea más deseable esta métrica de error, para evitar que el modelo tienda a predecir constantemente valores bajos. 
 
 \subsection{Modelos Candidatos}
 
@@ -726,11 +756,10 @@ Una vez entrenado sobre todo el conjunto de entrenamiento, mostramos los resulta
     \centering
     \begin{tabular}{|c|c|c|c|}
     \hline
-    Conjunto de datos  & MSE & MAE & R2 \\
+    \textbf{Conjunto de datos}  & \textbf{MSE} & \textbf{MAE} & \textbf{$R^2$} \\
     \hline
     Training & 131.28  & 2.68 & 0.77 \\
     Testing  & 541.50  & 4.81 & 0.55 \\
-    Dummy    & 1226.51 & 9.41 & 0.00 \\
     \hline
     \end{tabular}
     \caption{Resultados tras el entrenamiento sobre todo el conjunto de datos}
@@ -748,6 +777,45 @@ La curva de aprendizaje obtenida es la siguiente:
 
 \subsection{Análisis de los resultados obtenidos}
 
+% TODO -- escribir cosas iniciales
+En el conjunto de entrenamiento hemos obtenido buenos resultados. Esto no nos sorprende por la alta capacidad de sobreajuste que tienen los árboles, a pesar de que hayamos fijado un par de parámetros como medida de regularización.
+
+El error cuadrático medio en el conjunto de \emph{test} ha sido 4.12 veces mayor que en \emph{training}, mientras que en el error absoluto medio ha sido 1.79 veces mayor. El valor de $R^2$ en testing es de 0.55, lo cual indica unos resultados mediocres. Estamos explicando poco más de la mitad de la varianza en test con nuestro modelo.
+
+A la vista de estos resultados, nos preguntamos si hemos tenido problemas de generalización a pesar de haber empleado un par de parámetros para regularizar. Se puede dar perfectamente el caso de que el modelo esté generalizando muy mal, o también de que el conjunto de \emph{test} sea complicado y cualquier modelo o medida de regularización provoque resultados peores a los que estamos obteniendo en test. Es por esto que vamos a emplear una serie de modelos como \emph{baselines} con los que comparar. Además, tenemos la sospecha de que esto pueda pasar por lo comentado en \emph{\ref{boxplot}. \nameref{boxplot}}.
+
+Como \emph{baselines} vamos a emplear los siguientes modelos:
+
+\begin{itemize}
+  % TODO -- esto ya no es verdad
+  \item El mejor modelo que se obtiene al aplicar \emph{Cross Validation} sobre el conjunto de entrenamiento al que aplicábamos \emph{PCA} y trasnformaciones polinómicas
+  \item Un regresor que siempre devuelve la mediia, usando \lstinline{DummyRegressor} de \lstinline{sklearn}
+  \item Un regresor que siempre devuelve el valor cero, usando \lstinline{DummyRegressor}
+\end{itemize}
+
+Los resultados que se obtienen en test con estos regresores de referencia se muestran en la siguiente tabla:
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+  \textbf{Modelos}  & \textbf{MSE} & \textbf{MAE} & \textbf{$R^2$} \\
+  \hline
+  MLP  & 13492087171.54  & 1337.71 & -11034540.96 \\
+  Dummy Media   & 1226.51 & 9.41 & 0.00 \\
+  Dummy Cero & 1273.93 & 7.15 & -0.04 \\
+  \hline
+  \end{tabular}
+  \caption{Resultados en test de los regresores de referencia}
+\end{table}
+
+Claramente en todos los modelos de referencia obtenemos resultados significativamente peores, y por tanto podemos concluir que, a pesar de nuestras dudas, el modelo considerado está aprendiendo de forma efectiva una función.
+
+Nuestro modelo no está prediciendo de forma sistemática valores cercanos a la media ni valores constantemente cero, pues los resultados son mucho mejores que los que se obtienen siguiendo este comportamiento. 
+
+Cabe destacar que el \emph{baseline} \emp{MLP} obtiene un error cuadrático medio en training de 263.66, y por tanto, está teniendo problemas de generalización mucho más graves que el modelo que hemos considerado. Aunque no podemos descartar que esto venga provocado porque la transformación que supone aplicar \emph{PCA} y después aplicar trasnformaciones polinómicas suponga empeorar la calidad de nuestros datos.
+
+Respecto a las curvas de aprendizaje, mantenemos el error % TODO -- seguir
 
 
 \pagebreak
