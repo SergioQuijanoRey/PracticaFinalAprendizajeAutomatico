@@ -211,6 +211,8 @@ Incluye 5 características tipo medatadatos del post, como puede ser la longitud
 
 \subsection{Exploración del \emph{Dataset}} \label{exploracion_datos} \label{boxplot}
 
+Como ya hemos comentado, el problema presenta distintas variantes en función de las referencias temporales fijadas. Por tanto, tenemos distintos problemas de regresión con distintos dominios, es decir, no tiene sentido juntar todas las variantes del problema de las que disponemos. Así, nos quedamos solo con los datos relativos a la variante 1.
+
 Con la función \lstinline{explore_dataset}, mostramos algunas estadísticas de las variables aleatorias que componen las columnas de nuestro conjunto de datos. Notar que en esta exploración ya hemos separado el conjunto de \emph{training} y \emph{testing}, con la función \lstinline{split_train_test} que más adelante, en \emph{\ref{preprocesado}. \nameref{preprocesado}}.
 
 Tras esta separación nos quedamos con 32839 ejemplos para entrenamiento y 8210 ejemplos para test.
@@ -309,7 +311,7 @@ Por la cantida de valores atípicos, no se ve bien que sea una gráfica de cajas
 A partir de estas gráficas quedan claros los siguientes hechos:
 
 \begin{itemize}
-  \item Todos los elementos que quedan por debajo del percentil 75 en la variable de salida tienen menos de 10 comentarios. 
+  \item Todos los elementos que quedan por debajo del percentil 75 en la variable de salida tienen menos de 10 comentarios.
   \item El rango intercuartílico es muy pequeño, por tanto, sabemos que los datos, en su variable de salida, están muy concentrados en un número de comentarios muy bajo
   \item Tenemos una gran cantidad de valores atípicos en la variable de salida. Atípicos en el sentido de que se alejan del percentil 75 más de 1.5 veces el rango intercuartílico
 \end{itemize}
@@ -463,7 +465,7 @@ Vamos a emplear la técnica \emph{k-fold Cross Validation} para elegir la mejor 
 
 En todos los modelos que consideramos, consideramos como métrica de evaluación el error cuadrático medio. En regresión hemos visto pocas alternativas, algunas como el error absoluto medio o el coeficiente R2. Sin embargo, consideramos el error cuadrático medio pues todos los modelos considerados usan esta métrica como métrica de error a minimizar, y es una métrica fácilmente interpretable.
 
-Además, como ya se ha comentado, la distribución de los datos de salida hace que sea más deseable esta métrica de error, para evitar que el modelo tienda a predecir constantemente valores bajos. 
+Además, como ya se ha comentado, la distribución de los datos de salida hace que sea más deseable esta métrica de error, para evitar que el modelo tienda a predecir constantemente valores bajos.
 
 \subsection{Modelos Candidatos}
 
@@ -777,7 +779,6 @@ La curva de aprendizaje obtenida es la siguiente:
 
 \subsection{Análisis de los resultados obtenidos}
 
-% TODO -- escribir cosas iniciales
 En el conjunto de entrenamiento hemos obtenido buenos resultados. Esto no nos sorprende por la alta capacidad de sobreajuste que tienen los árboles, a pesar de que hayamos fijado un par de parámetros como medida de regularización.
 
 El error cuadrático medio en el conjunto de \emph{test} ha sido 4.12 veces mayor que en \emph{training}, mientras que en el error absoluto medio ha sido 1.79 veces mayor. El valor de $R^2$ en testing es de 0.55, lo cual indica unos resultados mediocres. Estamos explicando poco más de la mitad de la varianza en test con nuestro modelo.
@@ -787,10 +788,9 @@ A la vista de estos resultados, nos preguntamos si hemos tenido problemas de gen
 Como \emph{baselines} vamos a emplear los siguientes modelos:
 
 \begin{itemize}
-  % TODO -- esto ya no es verdad
-  \item El mejor modelo que se obtiene al aplicar \emph{Cross Validation} sobre el conjunto de entrenamiento al que aplicábamos \emph{PCA} y trasnformaciones polinómicas
-  \item Un regresor que siempre devuelve la mediia, usando \lstinline{DummyRegressor} de \lstinline{sklearn}
-  \item Un regresor que siempre devuelve el valor cero, usando \lstinline{DummyRegressor}
+    \item El segundo mejor modelo en el conjunto de datos al que solo aplicas borrado de \emph{outliers} (para poder realizar comparaciones justas que no dependan del conjunto de datos)
+    \item Un regresor que siempre devuelve la mediia, usando \lstinline{DummyRegressor} de \lstinline{sklearn}
+    \item Un regresor que siempre devuelve el valor cero, usando \lstinline{DummyRegressor}
 \end{itemize}
 
 Los resultados que se obtienen en test con estos regresores de referencia se muestran en la siguiente tabla:
@@ -801,7 +801,7 @@ Los resultados que se obtienen en test con estos regresores de referencia se mue
   \hline
   \textbf{Modelos}  & \textbf{MSE} & \textbf{MAE} & \textbf{$R^2$} \\
   \hline
-  MLP  & 13492087171.54  & 1337.71 & -11034540.96 \\
+  MLP  & 1471.20  &  7.72 & -0.20 \\
   Dummy Media   & 1226.51 & 9.41 & 0.00 \\
   Dummy Cero & 1273.93 & 7.15 & -0.04 \\
   \hline
@@ -811,12 +811,39 @@ Los resultados que se obtienen en test con estos regresores de referencia se mue
 
 Claramente en todos los modelos de referencia obtenemos resultados significativamente peores, y por tanto podemos concluir que, a pesar de nuestras dudas, el modelo considerado está aprendiendo de forma efectiva una función.
 
-Nuestro modelo no está prediciendo de forma sistemática valores cercanos a la media ni valores constantemente cero, pues los resultados son mucho mejores que los que se obtienen siguiendo este comportamiento. 
+Nuestro modelo no está prediciendo de forma sistemática valores cercanos a la media ni valores constantemente cero, pues los resultados son mucho mejores que los que se obtienen siguiendo este comportamiento.
 
-Cabe destacar que el \emph{baseline} \emp{MLP} obtiene un error cuadrático medio en training de 263.66, y por tanto, está teniendo problemas de generalización mucho más graves que el modelo que hemos considerado. Aunque no podemos descartar que esto venga provocado porque la transformación que supone aplicar \emph{PCA} y después aplicar trasnformaciones polinómicas suponga empeorar la calidad de nuestros datos.
+Cabe destacar que el \emph{baseline} \emph{MLP} obtiene un error cuadrático medio en training de 255.91, y por tanto, está teniendo problemas de generalización mucho más graves que el modelo que hemos considerado.
 
-Respecto a las curvas de aprendizaje, mantenemos el error % TODO -- seguir
+Notar que cuando obtenemos un valor de $R^2$ negativo, esto indica que nuestro modelo predice peor que el valor constantemente la media (por tanto \emph{Dummy} usando la media obtiene $R^2 = 0$).
 
+Respecto a las curvas de aprendizaje, mantenemos el error en el conjunto de entrenamiento más o menos constante, gracias a la regularización que estamos aplicando. Mientras, el error en el conjunto de test desciende, y por tanto, estamos aprendiendo de forma efectiva la función. El error en \emph{testing} no alcanza una meseta ni tampoco un mínimo que no sea en el borde, así que es razonable pensar que con un conjunto de datos más grande podríamos mejorar el rendimiento de nuestro modelo.
+
+La curva de aprendizaje del \emph{baseline} \emph{MLP} se muestra en la siguiente imagen:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{curva_aprendizaje_mlp}
+  \caption{Curva de aprendizaje del \emph{baseline} \emph{MLP}}
+\end{figure}
+
+En este caso, vemos como el modelo \emph{baseline} no está teniendo capacidad alguna de aprender la función objetivo.
+
+Ahora, con la función \lstinline{where_did_the_model_failed} miramos los puntos en los que tenemos mayor error de salida, para tener una intuición de dónde falla más nuestro modelo. Nos interesa saber los valores de salida en los que más fallamos y el valor predicho para estos puntos. Las peores 25 etiquetas reales son: 1147,  896,  918,  704,  695,  507,  580,  564,  441,  434,  454,  455,  320,  409,   369,  527,  431,  284,  217,  338,   40,  229,  300,  306 y 253.
+
+Ahora, mostramos un gráfico en el que en el eje $X$ mostramos el valor real de la etiqueta, y en el eje $Y$ mostramos el valor que nuestro modelo predice:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{where_did_we_failed}
+    \caption{Peores predicciones de nuestro modelo}
+\end{figure}
+
+Como podíamos suponer, como nuestra muestra de datos está muy concentrada en valores cercanos a cero de comentarios, la mayor parte de los ejemplos mal clasificados son aquellos con un número alto de comentarios (aquellos con más de 200 comentarios, cuando consideramos los 25 peores puntos). Esto podría mitigarse con el uso de un \emph{dataset} que tuviese más ejemplos de \emph{posts} con un número alto de comentarios.
+
+Es significativo el punto con comentarios reales cercanos a cero que ha sido predicho con algo más de doscientos comentarios. Del mismo modo comentarios por encima de 800 comentarios se predicen a valores por debajo de 350 comentarios. Por tanto, nuestro modelo trabaja mal con valores extremadamente altos (por encima de 200 comentarios) tendiendo sus predicciones hacia valores más medios.
+
+\textbf{En conclusión}, hemos encontrado un modelo robusto que ha funcionado bien teniendo en cuenta las particularidades y complicaciones que presentaba nuestro \emph{dataset}. Como mejoras al trabajo presentado podrían realizarse un procedimiento similar usando un \emph{dataset} con más representación de \emph{post} con muchos comentarios. También podría haberse presentado alguna técnica para sobrellevar este problema de representatividad, como \emph{data augmentation}, aunque no tenemos conocimiento de cómo aplicarla de forma eficiente y correcta.
 
 \pagebreak
 \section{Apéndice} \label{apendice}
