@@ -523,7 +523,9 @@ Como el algoritmo de aprendizaje se usa el algoritmo \emph{greedy} que se ha exp
 
 El código que lanza \emph{Cross validation} se encuentra en la función \lstinline{show_cross_validation}.
 
-Esta función hace uso de \emph{GridSearchCV} de \emph{sklearn}. Mediante el uso del parámetro \lstinline{scoring} indicamos que queremos usar el error cuadrático medio negado como error de validación, lo que implica que los resultados serán negativos y tendremos que elegir el mayor de ellos.
+Esta función hace uso de \emph{GridSearchCV} de \emph{sklearn}. Mediante el uso del parámetro \lstinline{scoring} indicamos que queremos usar el error cuadrático medio cambiado de signo como error de validación.
+
+\lstinline{sklearn} devuelve las métricas de error en negativo. Estas métricas de error se usan en otros módulos de \lstinline{sklearn} donde se busca resolver un problema de maximización. Como se busca minimizar el error, se cambia el signo a este para pasar a un problema de maximización.
 
 Esta función está comentada en el código, pues supone un tiempo demasiado largo de cómputo. En nuestra máquina tarda aproximadamente 4 horas \footnote{Ver en \emph{\ref{apendice}. \nameref{apendice}} las características de la máquina que se ha usado para la ejecución}, mientras que en \emph{Google Colab}, usando el plan gratuito, tarda una hora y media aproximadamente.
 
@@ -620,7 +622,86 @@ Además, se confirma nuestra hipótesis de que, en este \emph{dataset} con pocas
 
 \subsubsection{Resultados sobre el conjunto de datos al que hemos aplicado \emph{PCA} y transformaciones polinómicas}
 
-% TODO -- falta poner las tablas
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+    \textbf{Regularizador} & \textbf{Alpha} & \textbf{Media MSE} & \textbf{STD MSE} \\
+    \hline
+    \textbf{Lasso} & \textbf{0.1} & \textbf{-369.36} & \textbf{117.27}  \\
+    Lasso & 1.0 & -422.36 & 126.32  \\
+    Lasso & 2.0 & -463.91 & 133.16  \\
+    Ridge & 0.1 & -114052.07 & 320694.41 \\
+    Ridge & 1.0 & -2634.53   &   5722.91 \\
+    Ridge & 2.0 & -1049.48   &   1699.59 \\
+    \hline
+  \end{tabular}
+  \caption{Resultados de \emph{Cross Validation} en el \textbf{modelo lineal}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+
+\textbf{Alpha} & \textbf{Nº Neuronas Capas Ocultas} & \textbf{Media MSE} & \textbf{STD MSE} \\
+\hline
+0.01 & 50   & -374.04 & 178.41 \\
+0.01 & 75   & -354.91 & 181.29 \\
+0.01 & 100  & -355.76 & 186.29 \\
+0.1  & 50   & -355.13 & 174.81 \\
+0.1  & 75   & -381.34 & 159.67 \\
+0.1  & 100  & -367.31 & 177.25 \\
+1    & 50   & -353.95 & 168.25 \\
+\textbf{1}    & \textbf{75}   & \textbf{-348.79} & \textbf{171.30} \\
+1    & 100  & -357.69 & 180.35 \\
+\hline
+  \end{tabular}
+  \caption{Resultados de \emph{Cross Validation} en \textbf{MLP}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{|c|c|c|c|c|}
+  \hline
+  \textbf{Profundidad} & \textbf{Mínimo de ejemplos en los nodos} & \textbf{Nº Estimadores} & \textbf{Media MSE} & \textbf{STD MSE} \\
+\hline
+5   & 2 & 90    & -445.43 & 171.04 \\
+5   & 2 & 95    & -448.79 & 174.59 \\
+5   & 2 & 100   & -447.15 & 174.10 \\
+5   & 2 & 120   & -447.23 & 172.69 \\
+5   & 3 & 90    & -445.92 & 176.28 \\
+5   & 3 & 95    & -446.91 & 175.16 \\
+5   & 3 & 100   & -445.29 & 173.27 \\
+5   & 3 & 120   & -444.10 & 174.23 \\
+10  & 2 & 90    & -408.38 & 165.83 \\
+10  & 2 & 95    & -411.08 & 166.98 \\
+10  & 2 & 100   & -409.90 & 164.27 \\
+10  & 2 & 120   & -408.67 & 165.90 \\
+10  & 3 & 90    & -406.30 & 164.12 \\
+10  & 3 & 95    & -405.95 & 165.13 \\
+\textbf{10}  & \textbf{3} & \textbf{100}   & \textbf{-405.88} & \textbf{164.58} \\
+10  & 3 & 120   & -406.93 & 165.64 \\
+\hline
+  \end{tabular}}
+  \caption{Resultados de \emph{Cross Validation} en \textbf{RandomForest}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \resizebox{\columnwidth}{!}{
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+  \textbf{Modelo} & \textbf{Parametros} & \textbf{Media MSE} & \textbf{STD MSE} \\
+  \hline
+  Lasso  & $\alpha$ = 0.1  & -369.36 & 117.27  \\
+  \textbf{MLP}    & $\alpha$ = \textbf{1}, nº neur = \textbf{75} & \textbf{-348.79}  & \textbf{171.30} \\
+  RandomForest & profundidad = 10, min ejemplos = 3 nº estimadores = 100 & -405.88 & 164.58 \\
+\hline
+  \end{tabular}}
+  \caption{Mejores resultados}
+\end{table}
 
 \pagebreak
 
@@ -655,11 +736,19 @@ Una vez entrenado sobre todo el conjunto de entrenamiento, mostramos los resulta
     \caption{Resultados tras el entrenamiento sobre todo el conjunto de datos}
 \end{table}
 
-La fila \emph{Dummy} se refiere a un regresor que siempre devuelve la media (con la clase de \lstinline{sklearn} \lstlisting{DummyRegressor(strategy="mean")}), evaluado sobre el conjunto de test.
+La fila \emph{Dummy} se refiere a un regresor que siempre devuelve la media (con la clase de \lstinline{sklearn} \lstinline{DummyRegressor(strategy="mean")}), evaluado sobre el conjunto de test.
 
 La curva de aprendizaje obtenida es la siguiente:
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{curva_aprendizaje}
+  \caption{Curva de aprendizaje del modelo final}
+\end{figure}
+
 \subsection{Análisis de los resultados obtenidos}
+
+
 
 \pagebreak
 \section{Apéndice} \label{apendice}

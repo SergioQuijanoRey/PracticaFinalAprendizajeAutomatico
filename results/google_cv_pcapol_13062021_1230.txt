@@ -1,0 +1,68 @@
+Resultados para Lasso
+================================================================================
+
+	--> Param: {'alpha': 0.1}, mean_score: -369.3693987352516, std_score: 117.27780662073164, test_times_train = 1.11029859249862
+	--> Param: {'alpha': 1}, mean_score: -422.362467147022, std_score: 126.32178802161593, test_times_train = 1.0254028830742463
+	--> Param: {'alpha': 1.0}, mean_score: -422.362467147022, std_score: 126.32178802161593, test_times_train = 1.0254028830742463
+	--> Param: {'alpha': 2.0}, mean_score: -463.91342642143127, std_score: 133.16363081493398, test_times_train = 1.0124053010444771
+
+Resultados para Ridge
+================================================================================
+
+	--> Param: {'alpha': 0.1}, mean_score: -114052.07353198933, std_score: 320694.4121710328, test_times_train = 376.6167007231519
+	--> Param: {'alpha': 1}, mean_score: -2634.5309057172226, std_score: 5722.911649299344, test_times_train = 8.544991801282785
+	--> Param: {'alpha': 1.0}, mean_score: -2634.5309057172226, std_score: 5722.911649299344, test_times_train = 8.544991801282785
+	--> Param: {'alpha': 2.0}, mean_score: -1049.488300097883, std_score: 1699.5981110550986, test_times_train = 3.392778720106086
+
+Resultados para MLP
+================================================================================
+
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (50,)}, mean_score: -374.0440461968231, std_score: 178.4180827310337, test_times_train = 1.4949864527888246
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (75,)}, mean_score: -354.9188309972061, std_score: 181.29610446361292, test_times_train = 1.6331811408437926
+	--> Param: {'activation': 'relu', 'alpha': 0.01, 'hidden_layer_sizes': (100,)}, mean_score: -355.7624705201467, std_score: 186.29800108051046, test_times_train = 1.4624362467334604
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (50,)}, mean_score: -355.1332388557353, std_score: 174.8166709415656, test_times_train = 1.3590677849152237
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (75,)}, mean_score: -381.34343485065244, std_score: 159.67817301044133, test_times_train = 1.5926751894037892
+	--> Param: {'activation': 'relu', 'alpha': 0.1, 'hidden_layer_sizes': (100,)}, mean_score: -367.316228400446, std_score: 177.25663165624712, test_times_train = 1.4110005423547816
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (50,)}, mean_score: -353.9560597279878, std_score: 168.2539782920097, test_times_train = 1.4970560758879143
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (75,)}, mean_score: -348.79635150013354, std_score: 171.30684855115157, test_times_train = 1.4754545740673626
+	--> Param: {'activation': 'relu', 'alpha': 1, 'hidden_layer_sizes': (100,)}, mean_score: -357.6972871101883, std_score: 180.35717217594808, test_times_train = 1.5354177871032835
+
+Fitting 10 folds for each of 16 candidates, totalling 160 fits
+Resultados para Random Forest
+================================================================================
+
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 90}, mean_score: -445.4312716653043, std_score: 171.04429955160737, test_times_train = 1.3283056982661927
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 95}, mean_score: -448.7962754494205, std_score: 174.5955055061129, test_times_train = 1.3394618344290332
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 100}, mean_score: -447.156427735954, std_score: 174.1015316403526, test_times_train = 1.3389921099361402
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 2, 'n_estimators': 120}, mean_score: -447.23587403735127, std_score: 172.69849960718236, test_times_train = 1.3476889235359701
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 90}, mean_score: -445.9226694629001, std_score: 176.28113709158416, test_times_train = 1.296611652587808
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 95}, mean_score: -446.91964089658507, std_score: 175.16408779301025, test_times_train = 1.294514050560778
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 100}, mean_score: -445.2950021251253, std_score: 173.27262627254288, test_times_train = 1.2929581564758035
+	--> Param: {'max_depth': 5, 'min_samples_leaf': 3, 'n_estimators': 120}, mean_score: -444.1077512935816, std_score: 174.23775716864495, test_times_train = 1.294148613409834
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 90}, mean_score: -408.382315043806, std_score: 165.83253818223608, test_times_train = 2.2520434767376156
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 95}, mean_score: -411.08772365967934, std_score: 166.98759083356364, test_times_train = 2.2420005586895693
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 100}, mean_score: -409.9078053801494, std_score: 164.27726599354204, test_times_train = 2.228350165881659
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 2, 'n_estimators': 120}, mean_score: -408.6737232640946, std_score: 165.9026533709199, test_times_train = 2.256549648131723
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 90}, mean_score: -406.3041351359314, std_score: 164.12646663047857, test_times_train = 1.9115429792337733
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 95}, mean_score: -405.9532570955344, std_score: 165.13083630479488, test_times_train = 1.9174930379548147
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 100}, mean_score: -405.88606301056666, std_score: 164.58370392674192, test_times_train = 1.922807176823107
+	--> Param: {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 120}, mean_score: -406.93968712855906, std_score: 165.64532115689642, test_times_train = 1.9182130809326294
+
+--> CV -- No PCA
+==> Entrenando sobre todo el conjunto de datos
+--> Entrenando sobre todo el conjunto de datos con el modelo final
+--> Modelo entrenado, mostrando resultados
+--> Resultados en training set:
+	--> MSE: 136.5280255724326
+	--> MAE: 2.713474174239712
+	--> R2: 0.7643239073945057
+
+--> Resultados en testing set:
+	--> MSE: 542.6770318214135
+	--> MAE: 4.716917436587298
+	--> R2: 0.5561700421714334
+
+--> Resultados en dummy set:
+	--> MSE: 1226.5104528377317
+	--> MAE: 9.418550696085314
+	--> R2: -0.003105071044185115
