@@ -216,29 +216,23 @@ def show_cross_validation(df_train_x, df_train_y, df_train_x_original):
 
     print("--> CV -- PCA + Polinimio orden 2")
     # Cross validation para modelos lineales
-    # TODO -- descomentar
     cross_validation_linear(df_train_x, df_train_y)
 
     # Cross validation para SVM
-    # TODO -- descomentar
     cross_validation_mlp(df_train_x, df_train_y)
 
     # Cross validation para random forest
-    # TODO -- descomentar
     cross_validation_random_forest(df_train_x, df_train_y)
 
     print("--> CV -- No PCA")
     # Cross validation para modelos lineales
-    # TODO -- descomentar
-    #  cross_validation_linear(df_train_x_original, df_train_y)
+    cross_validation_linear(df_train_x_original, df_train_y)
 
     # Cross validation para MLP
-    # TODO -- descomentar
-    #  cross_validation_mlp(df_train_x_original, df_train_y)
+    cross_validation_mlp(df_train_x_original, df_train_y)
 
     # Cross validation para random forest
-    # TODO -- descomentar
-    #  cross_validation_random_forest(df_train_x_original, df_train_y)
+    cross_validation_random_forest(df_train_x_original, df_train_y)
 
     wait_for_user_input()
 
@@ -457,17 +451,26 @@ if __name__ == "__main__":
     df_train_x, df_test_x = standarize_dataset(df_train_x, df_test_x)
 
     print("==> Lanzando cross validation")
+    # Esta comentado porque tarda demasiado tiempo en ejecutarse
+    #  show_cross_validation(df_train_x, df_train_y, df_train_original_x)
+
+    print("==> Entrenando sobre todo el conjunto de datos sin PCA")
     # TODO -- descomentar
-    show_cross_validation(df_train_x, df_train_y, df_train_original_x)
+    #  model = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", max_depth = 10, min_samples_leaf = 2, n_estimators = 90, n_jobs = n_jobs)
+    #  print(f"--> Entrenando sobre todo el conjunto de datos con el modelo final")
+    #  model.fit(df_train_original_x, df_train_y)
 
-    print("==> Entrenando sobre todo el conjunto de datos")
-    model = RandomForestRegressor(criterion="mse", bootstrap=True, max_features = "sqrt", max_depth = 10, min_samples_leaf = 2, n_estimators = 90, n_jobs = n_jobs)
-    print(f"--> Entrenando sobre todo el conjunto de datos con el modelo final")
-    model.fit(df_train_original_x, df_train_y)
+    #  print(f"--> Modelo entrenado, mostrando resultados")
+    #  show_results(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
 
-    print(f"--> Modelo entrenado, mostrando resultados")
-    show_results(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y)
+    #  print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
+    #  learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
 
-    print(f"--> Mostrando la curva de aprendizaje del entrenamiento del modelo")
-    learning_curve(model, df_train_original_x, df_train_y, df_test_original_x, df_test_y, number_of_splits = 10)
+    print("==> Entrenando sobre todo el conjunto de datos al que hemos aplicado PCA y pol_features")
+    model = MLPRegressor(alpha = 1, hidden_layer_sizes = [(75)], activation = "relu", tol = 1e-4, solver="adam", learning_rate_init = 0.001, early_stopping = True)
+    model.fit(df_train_x, df_train_y)
+    show_results(model, df_train_x, df_train_y, df_test_x, df_test_y)
+    learning_curve(model, df_train_x, df_train_y, df_test_x, df_test_y, number_of_splits = 10)
+
+
 
