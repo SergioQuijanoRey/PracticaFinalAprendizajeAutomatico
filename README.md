@@ -1,4 +1,4 @@
-# Candidatos
+# Datasets Candidatos
 
 1. Optical Recognition of Handwritten Digits Data Set -- 29
     * Vienen en pixeles, [0, 1]
@@ -19,51 +19,21 @@
 
 # Asignación final
 
-* Nos asignan el problema de Facebook Comment Volume Dataset Data Set -> Me quiero morir
+* Nos asignan el problema de Facebook Comment Volume Dataset Data Set
 * https://archive.ics.uci.edu/ml/datasets/Facebook+Comment+Volume+Dataset
 
-# TODO
+# Modelos de machine learning candidatos
 
-* [x] Juntar los datasets
-* [x] Limpieza de los datos
-* [x] Pensar los modelos que queremos usar
-* [x] Escribir la funcion que elimine outliers con el `z-score` de `Pandas`
-* [x] Función que tome los resultados de `GridSearchCV` y los muestre por pantalla en un formato legible
-* [x] Hacer los *cross-validation* faltantes
-* [x] Adaptar Cross validation a no usar PCA
-* [x] Adaptar Cross Validation + PCA a polinomios
-* [ ] Entrenar sobre todo el conjunto de datos
-* [ ] Escribir memoria 😥
+* Linear Model
+* Random Forest
+* MLP
 
-# Dudas Mesejo
+# Memoria desarrollada
 
-* [ ] Preguntar a Mesejo lo de las learning curves
-* [ ] Se puede usar el out of bag error en RForest para acelerar el Cross Validation?
+* La memoria en la que analizamos los datos y resultados se encuentra en el siguiente [enlace](https://github.com/SergioQuijanoRey/PracticaFinalAprendizajeAutomatico/blob/master/Memoria/Memoria.pdf)
 
-# Modelos candidatos
+# Notas finales
 
-1. Modelo lineal: ajuste de un hiperplano
-    * Lasso
-    * Ridge
-2. Perceptrón multicapa
-3. Random Forrest
-4. Radial Basis Function
-5. Boosting con árboles simples se puede poner como ejemplo de que van mal, no están incorrelados, y esto es lo que trata de mejorar Random Forrest
-
-# Notas
-
-* Support vector machine, en los apuntes, ponía que no tenía mucho éxito con regresión
-* Poner en la memoria cómo hemos hecho `unzip` en la carpeta de datos
-* Hay que explicar lo que hace LocalOutlierFactor: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html
-
-# Consejos Mesejo
-
-* Cómo hacer que entrene bien:
-    * Escoger bien las épocas, aplicar early stopping
-    * Ser astutos a la hora de escoger parámetros
-    * Con curvas de aprendizaje podemos saber cuándo parar los entrenamientos
-    * Normalizar los datos acelera los entrenamientos
-* Fijarnos en las curvas de entrenamiento: curvas de train y val a lo largo de las epochs
-* A Nicolás le gustará que mostremos las curvas de aprendizaje
-* Mas del 5% de los ejemplos fuera con outliers, está probablemente mal
-* Podemos reducir a 70% - 30% de los datos para training - testing
+* Por exigencias de los profesores, todo el código debía estar escrito en un único fichero `main.py`
+    * De no haber sido así, habríamos escrito distintos módulos `.py` desarrollados a lo largo del curso, y un `jupyter notebook` donde realizar toda la exploración de datos, selección de modelo, entrenamiento y análisis de resultados
+* Los modelos fueron entrenados en *Google Collab*. Para actualizar tanto los datos como el código de forma cómoda usamos `rclone` sobre el *Google Drive* proporcionado por la Universidad de Granada
